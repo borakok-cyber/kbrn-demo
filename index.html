@@ -183,7 +183,7 @@ const ST=[
     {t:'Üzerine krem sürerim.',s:2,fb:'Krem kimyasalı cilt üzerinde tutar. Önce bol suyla yıka.'}]}]}
 ];
 const S={mode:null,next:0,cur:-1,q:0,ppm:0,target:0,ans:[],t0:0,stT:[],stEnd:[],inQ:false,moving:false,motionCheck:true,origin:null,em:{x:0,y:0},muted:false,lastToast:0,lastBeep:0};
-const video=$('cam'),cv=$('fx'),ctx=cv.getContext('2d');
+const video=$('cam');let cv=$('fx'),ctx=null;
 let det=null,ac=null;
 
 function toast(m){const now=Date.now();if(now-S.lastToast<2500)return;S.lastToast=now;const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
@@ -202,7 +202,7 @@ async function start(cam){
       setInterval(scan,350);
     }catch(e){S.mode='demo';$('ar').classList.add('nocam');toast('Kamera açılamadı. Demo modunda devam ediliyor.')}
   }else $('ar').classList.add('nocam');
-  resize();chip();requestAnimationFrame(loop);
+  S.em={x:innerWidth*.5,y:innerHeight*.55};resize();chip();requestAnimationFrame(loop);
 }
 
 /* QR okuma: önce yerleşik BarcodeDetector, yoksa jsQR */
@@ -224,7 +224,7 @@ function onCode(code){
   enter(i);
 }
 function enter(i){
-  S.cur=i;S.q=0;S.inQ=true;S.target=ST[i].base;S.stT[i]=Date.now();if(!S.t0)S.t0=S.stT[i];
+  S.cur=i;S.q=0;S.inQ=true;S.fxT0=performance.now();S.target=ST[i].base;S.stT[i]=Date.now();if(!S.t0)S.t0=S.stT[i];
   if(navigator.vibrate)navigator.vibrate([120,60,120]);
   $('wind').classList.toggle('on',!!ST[i].wind);
   const s=ST[i];sheet(`<h3>${s.name}</h3><p class="where">${s.place}</p><p>${s.intro}</p><button class="go" data-act="q">Ne yapacağına karar ver</button>`);chip();
@@ -240,7 +240,7 @@ function answer(i){
 }
 function nextQ(){
   const s=ST[S.cur];if(s.qs[S.q+1]){S.q++;if(S.target>s.base*1.5)S.target=s.base;showQ();return}
-  S.stEnd[S.cur]=Date.now();S.inQ=false;S.next++;S.target=s.after;$('sheet').classList.remove('on');$('wind').classList.remove('on');chip();
+  S.stEnd[S.cur]=Date.now();S.inQ=false;S.fxT0=performance.now();S.next++;S.target=s.after;$('sheet').classList.remove('on');$('wind').classList.remove('on');chip();
   if(S.next>=ST.length)setTimeout(report,1200);else toast(`${ST[S.next].name}: ${ST[S.next].place} noktasına git.`);
 }
 $('sheet').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.opt!=null)answer(+b.dataset.opt);else if(b.dataset.act==='q')showQ();else if(b.dataset.act==='next')nextQ()});
@@ -252,27 +252,88 @@ addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity;if(!a
   const mv=S.moving?sd>0.7:sd>1.3;if(mv!==S.moving){S.moving=mv;moveUI()}});
 function moveUI(){$('moving').classList.toggle('on',S.motionCheck&&S.moving&&S.inQ)}
 
-/* Bulut efekti */
+/* Buhar efekti: WebGL gürültü tabanlı akışkan görünüm (WebGL yoksa basit parçacık yedeği) */
+const FS=`#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform vec2 R,SRC,DIR;uniform float T,D,M,AGE;
+float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+const mat2 RM=mat2(1.6,1.2,-1.2,1.6);
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*n(p);p=RM*p;a*=.5;}return s;}
+void main(){
+ vec2 uv=gl_FragCoord.xy/R;float t=T,f=0.,dens=0.;
+ if(M<.5){
+  vec2 p=(gl_FragCoord.xy-SRC)/R.y,d=normalize(DIR),nn=vec2(-d.y,d.x);
+  float a0=max(dot(p,d),0.);p.y+=1.3*a0*a0;
+  float a=dot(p,d),b=dot(p,nn);
+  float len=.15+.85*min(AGE/3.,1.);
+  float w=.012+.36*max(a,0.);
+  float prof=exp(-b*b/(w*w))*smoothstep(-.01,.02,a)*(1.-smoothstep(len*.55,len,a));
+  float core=exp(-b*b/(w*w*.12))*exp(-max(a,0.)*9.)*smoothstep(-.01,.01,a);
+  vec2 q=p*4.5-d*t*1.7;q+=.85*vec2(fbm(q+t*.35),fbm(q+vec2(5.2,1.3)-t*.25));
+  f=fbm(q);
+  dens=max(prof*smoothstep(.3,.8,f+.32*prof),core);
+  float gx=(gl_FragCoord.x-SRC.x)/R.y,sp=.12+.7*min(AGE/12.,1.);
+  float gp=(1.-smoothstep(0.,.3,uv.y))*exp(-gx*gx/(sp*sp))*min(AGE/2.5,1.);
+  vec2 g=vec2(gx*3.-t*.12,uv.y*6.);g+=.7*vec2(fbm(g*.7+t*.08),fbm(g*.7+vec2(2.,9.)-t*.06));
+  float gf=fbm(g);dens=max(dens,gp*smoothstep(.32,.78,gf)*.9);f=max(f,gf*gp);
+ }else{
+  vec2 q=(uv-vec2(.5,1.))*vec2(R.x/R.y,1.)*2.6/(1.+AGE*.05);q.y+=t*.18;
+  q+=.9*vec2(fbm(q*.8+t*.1),fbm(q*.8+vec2(3.1,7.7)-t*.12));
+  f=fbm(q);
+  float edge=1.05-.95*min(AGE/7.,1.);
+  dens=smoothstep(edge-.35,edge+.05,uv.y+.3*(f-.5))*smoothstep(.28,.72,f+.1);
+ }
+ vec3 col=mix(vec3(.66,.71,.71),vec3(.98,.99,.99),clamp(f*1.25+.05+.15*uv.y,0.,1.));
+ float A=clamp(dens*D*1.1,0.,.9);
+ gl_FragColor=vec4(col*A,A);
+}`;
+let gl=null,U=null,FXS=1,P=[],acc=0,frame=0;
 const puff=document.createElement('canvas');puff.width=puff.height=128;{const p=puff.getContext('2d'),g=p.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,'rgba(240,248,244,1)');g.addColorStop(.5,'rgba(225,238,232,.55)');g.addColorStop(1,'rgba(220,235,228,0)');p.fillStyle=g;p.fillRect(0,0,128,128)}
-let P=[],acc=0,frame=0;
-function resize(){const d=Math.min(devicePixelRatio||1,2);cv.width=innerWidth*d;cv.height=innerHeight*d;ctx.setTransform(d,0,0,d,0,0)}
+function mkGL(){
+  const sh=(ty,src)=>{const o=gl.createShader(ty);gl.shaderSource(o,src);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o};
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}'));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(pr));gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const u={};['R','T','SRC','D','M','AGE','DIR'].forEach(k=>u[k]=gl.getUniformLocation(pr,k));return u;
+}
+function initFx(){
+  try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});if(!gl)throw new Error('webgl yok');U=mkGL();FXS=.5;return}
+  catch(e){console.warn('Buhar efekti yedek moda geçti:',e);gl=null;U=null}
+  const c2=cv.cloneNode();cv.replaceWith(c2);cv=c2;ctx=cv.getContext('2d');FXS=Math.min(devicePixelRatio||1,2);
+}
+initFx();
+function resize(){cv.width=Math.round(innerWidth*FXS);cv.height=Math.round(innerHeight*FXS);if(gl)gl.viewport(0,0,cv.width,cv.height);else ctx.setTransform(FXS,0,0,FXS,0,0)}
 addEventListener('resize',resize);
 function emitter(){
-  const W=innerWidth,H=innerHeight,s=ST[S.inQ?S.cur:Math.max(0,S.next-1)]||ST[0];let t={x:W*.5,y:H*.55};
-  if(s.emit==='top'&&S.inQ)t={x:W*.5,y:H*.18};
-  else if(S.origin&&Date.now()-S.origin.t<5000)t=S.origin;
-  S.em.x+=(t.x-S.em.x)*.08;S.em.y+=(t.y-S.em.y)*.08;return s;
+  let t={x:innerWidth*.5,y:innerHeight*.55};
+  if(S.origin&&Date.now()-S.origin.t<5000)t=S.origin;
+  S.em.x+=(t.x-S.em.x)*.08;S.em.y+=(t.y-S.em.y)*.08;
+}
+function fxParams(){
+  const v=S.ppm,tg=v<8?v/32:Math.min(1,.3+v/150);S.dens=(S.dens||0)+(tg-(S.dens||0))*.04;
+  return{M:S.inQ&&S.cur===0?0:1,D:S.dens,AGE:(performance.now()-(S.fxT0||0))/1000};
+}
+function drawGL(ts){
+  const f=fxParams(),k=cv.width/innerWidth;gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);if(f.D<.01)return;
+  gl.uniform2f(U.R,cv.width,cv.height);gl.uniform1f(U.T,(ts/1000)%1000);gl.uniform2f(U.SRC,S.em.x*k,(innerHeight-S.em.y)*k);
+  gl.uniform1f(U.D,f.D);gl.uniform1f(U.M,f.M);gl.uniform1f(U.AGE,f.AGE);gl.uniform2f(U.DIR,S.em.x>innerWidth*.6?-.9:.9,.3);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+}
+function drawP(){
+  const W=innerWidth,H=innerHeight;acc+=Math.min(5,S.ppm/35);
+  while(acc>=1&&P.length<260){acc--;P.push({x:S.em.x+(Math.random()-.5)*50,y:S.em.y+(Math.random()-.5)*20,vx:(Math.random()-.5)*.7,vy:-.15-Math.random()*.45,r:18+Math.random()*28,l:0,m:160+Math.random()*140})}
+  acc=Math.min(acc,3);ctx.clearRect(0,0,W,H);const dn=Math.min(1,.35+S.ppm/120);
+  P=P.filter(p=>{p.l++;p.x+=p.vx;p.y+=p.vy;p.r+=.35;const a=Math.sin(Math.PI*p.l/p.m)*.2*dn;if(a>0){ctx.globalAlpha=a;ctx.drawImage(puff,p.x-p.r,p.y-p.r,p.r*2,p.r*2)}return p.l<p.m});ctx.globalAlpha=1;
 }
 function loop(ts){
   frame++;S.ppm+=(S.target-S.ppm)*.02;
   const shown=Math.max(0,S.ppm*(1+.05*Math.sin(ts/350))+(S.ppm>1?Math.random()*1.5:0));
-  const s=emitter(),W=innerWidth,H=innerHeight,top=s.emit==='top'&&S.inQ;
-  acc+=Math.min(5,S.ppm/35);
-  while(acc>=1&&P.length<260){acc--;P.push({x:S.em.x+(Math.random()-.5)*50,y:S.em.y+(Math.random()-.5)*20,vx:(Math.random()-.5)*.7,vy:top?.6+Math.random()*.8:-.15-Math.random()*.45,r:18+Math.random()*28,l:0,m:160+Math.random()*140})}
-  acc=Math.min(acc,3);
-  ctx.clearRect(0,0,W,H);const dens=Math.min(1,.35+S.ppm/120);
-  P=P.filter(p=>{p.l++;p.x+=p.vx;p.y+=p.vy;p.r+=top?.7:.35;const a=Math.sin(Math.PI*p.l/p.m)*.2*dens;if(a>0){ctx.globalAlpha=a;ctx.drawImage(puff,p.x-p.r,p.y-p.r,p.r*2,p.r*2)}return p.l<p.m});
-  ctx.globalAlpha=1;
+  emitter();if(gl)drawGL(ts);else drawP();
   if(frame%5===0)hud(shown);
   beep(shown,ts);
   requestAnimationFrame(loop);
