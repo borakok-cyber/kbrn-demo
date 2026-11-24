@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KBRN Tatbikat – Amonyak Kaçağı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<style>
+:root{--y:#ffd100;--k:#111;--w:#fff;--ok:#1f9d55;--bad:#d7263d;--part:#f28c28;--glass:rgba(17,17,17,.8)}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--k);color:var(--w);font:16px/1.45 Barlow,system-ui,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none}
+h1,h2,h3{font-family:"Barlow Condensed",Barlow,sans-serif;letter-spacing:.01em}
+button{font:600 16px Barlow,sans-serif;border:0;border-radius:12px;cursor:pointer;color:inherit;background:none}
+button:focus-visible,input:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.screen{position:fixed;inset:0;display:none;flex-direction:column}.screen.on{display:flex}
+
+/* Başlangıç */
+#start{background:var(--y);color:var(--k);overflow-y:auto}
+.stripe{height:22px;flex:none;background:repeating-linear-gradient(-45deg,var(--k) 0 18px,var(--y) 18px 36px)}
+.inner{padding:22px max(5vw,18px) calc(28px + env(safe-area-inset-bottom));max-width:620px;margin:0 auto;width:100%}
+#start h1{font-size:clamp(40px,11vw,60px);line-height:1;margin:16px 0 8px;font-weight:800}
+.meta{font-weight:600;margin:0 0 16px}
+.pts{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:8px}
+.pts li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;background:rgba(0,0,0,.07);padding:10px 12px;border-radius:10px}
+.pts b{font:800 22px/40px "Barlow Condensed";background:var(--k);color:var(--y);border-radius:8px;text-align:center}
+.note{background:var(--k);color:var(--y);border-radius:12px;padding:12px 14px;font-weight:600;margin:0 0 14px}
+label.f{display:block;font-weight:600;margin:12px 0 6px}
+input[type=text]{width:100%;font:16px Barlow;padding:12px;border:2px solid var(--k);border-radius:10px;background:#fff;-webkit-user-select:text;user-select:text}
+.chk{display:flex;gap:10px;align-items:center;margin:14px 0;font-weight:600}.chk input{width:24px;height:24px}
+.btns{display:grid;gap:10px;margin-top:14px}
+.btns button{min-height:52px}
+.primary{background:var(--k);color:var(--y)}
+.ghost{color:var(--k);border:2px solid var(--k)}
+.fine{font-size:13px;margin-top:16px;opacity:.8}
+
+/* AR */
+#ar{background:#000}
+#ar.nocam{background:radial-gradient(120% 80% at 50% 0%,#3b4348,#121518 70%)}
+#ar.nocam::before{content:"";position:absolute;inset:55% -20% 0;background:repeating-linear-gradient(90deg,rgba(255,209,0,.18) 0 2px,transparent 2px 80px),repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 2px,transparent 2px 60px);transform:perspective(400px) rotateX(60deg);transform-origin:top}
+#cam,#fx{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#maskOv{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .8s;z-index:2;background:radial-gradient(ellipse 60% 44% at 50% 46%,transparent 64%,rgba(8,10,10,.6) 82%,rgba(4,5,5,.97) 100%)}
+#maskOv.on{opacity:1}
+#maskOv::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 48% 34% at 50% 62%,rgba(255,255,255,.4),transparent 70%);opacity:0;animation:fog 4s ease-in-out infinite}
+@keyframes fog{0%,100%{opacity:0}45%{opacity:.5}}
+.top{position:absolute;left:0;right:0;top:0;z-index:5;padding:calc(10px + env(safe-area-inset-top)) 12px 0;display:grid;gap:8px}
+.row{display:flex;gap:8px;align-items:stretch}
+#goal{flex:1;display:flex;gap:8px;align-items:center;background:var(--y);color:var(--k);border-radius:14px;padding:6px 6px 6px 14px;font-weight:600;font-size:15px;line-height:1.25;min-height:50px}
+#goalTxt{flex:1}
+#goalBtn{background:var(--k);color:var(--y);padding:0 12px;min-height:38px;font-size:14px;display:none;white-space:nowrap}
+#goalBtn.on{display:block}
+#mute{background:var(--glass);color:var(--w);padding:0 12px;font-size:14px;min-width:64px}
+#banner{background:var(--glass);border-left:5px solid var(--bad);border-radius:12px;padding:10px 12px;font-weight:600;transform:translateY(-10px);opacity:0;transition:.35s;pointer-events:none}
+#banner.on{transform:none;opacity:1}
+
+/* Eldeki dedektör */
+.dev{position:absolute;left:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:4;width:150px;padding:9px 10px 12px;background:linear-gradient(160deg,#ffe04a,#e3b400);border:3px solid #1a1a1a;border-radius:18px 18px 26px 26px;box-shadow:0 12px 30px rgba(0,0,0,.55),inset 0 -6px 0 rgba(0,0,0,.18);color:#1a1a1a;transform:rotate(-5deg);transform-origin:bottom left;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.dev.down{transform:translateY(135%) rotate(-5deg)}
+.dev-head{display:flex;justify-content:space-between;align-items:center;font:800 14px "Barlow Condensed";margin-bottom:6px}
+#led{width:12px;height:12px;border-radius:50%;background:#2c5a2c;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
+#led.on{background:#ff2d2d;box-shadow:0 0 12px #ff2d2d}
+.lcd{background:#b9c9a3;color:#15200f;border-radius:8px;padding:5px 8px 6px;border:3px solid #333;box-shadow:inset 0 2px 6px rgba(0,0,0,.35);transition:background .3s}
+.lcd.warn{background:#e6d27a}.lcd.alarm{background:#f2a0a0;color:#3a0000}
+#ppm{font:800 38px/1 "Barlow Condensed";font-variant-numeric:tabular-nums}
+.lcd small{font-weight:600;margin-left:3px}
+.bar{height:6px;background:rgba(0,0,0,.18);border-radius:3px;margin:4px 0 3px;overflow:hidden}
+#barFill{display:block;height:100%;width:0;background:currentColor}
+#detState{font-size:12px;font-weight:600;line-height:1.2;min-height:2.4em}
+.grip{height:8px;margin:8px 18px 0;border-radius:4px;background:repeating-linear-gradient(90deg,#1a1a1a 0 4px,transparent 4px 8px);opacity:.45}
+
+/* Maske */
+#maskBtn{position:absolute;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:7;width:86px;padding:8px 0 6px;background:var(--glass);border:3px solid var(--y);border-radius:20px;color:var(--w);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:14px;transition:bottom .4s cubic-bezier(.3,.7,.2,1)}
+#maskBtn svg{width:46px;height:46px;color:var(--y)}
+#maskBtn.used{border-color:var(--ok)}#maskBtn.used svg{color:#7fe0a5}
+
+/* Kaçak yön oku */
+#arrow{position:absolute;z-index:3;width:60px;height:60px;margin:-30px 0 0 -30px;display:none;pointer-events:none}
+#arrow.on{display:block}
+#arrow svg{width:60px;height:60px;filter:drop-shadow(0 2px 4px #000)}
+#arrow span{position:absolute;top:62px;left:50%;transform:translateX(-50%);font-weight:600;font-size:13px;white-space:nowrap;text-shadow:0 1px 3px #000}
+#wind{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);z-index:3;text-align:center;font-weight:600;display:none;text-shadow:0 1px 4px #000;width:80%}
+#wind.on{display:block}
+#wind svg{width:100px;height:100px;animation:blow 1.6s ease-in-out infinite}
+@keyframes blow{50%{transform:translateY(10px)}}
+
+/* Karar paneli */
+#choice{position:absolute;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:6;background:#fff;color:var(--k);border-radius:18px;padding:14px;transform:translateY(125%);transition:transform .4s cubic-bezier(.3,.7,.2,1);box-shadow:0 -6px 30px rgba(0,0,0,.35);max-height:62vh;overflow-y:auto}
+#choice.on{transform:none}
+.ch-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.ch-head h3{flex:1;margin:0;font-size:24px;line-height:1.1}
+#tnum{flex:none;font:800 24px "Barlow Condensed";width:48px;height:48px;border-radius:50%;border:3px solid var(--k);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.tbar{height:5px;background:#eee;border-radius:3px;margin-bottom:10px;overflow:hidden}
+#tfill{display:block;height:100%;background:var(--bad);width:100%}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.grid button{background:#f2f2f2;border:2px solid #e2e2e2;min-height:84px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;line-height:1.2;color:var(--k)}
+.grid button svg{width:30px;height:30px}
+.grid button:active{border-color:var(--k);background:#fff6cc}
+.grid.three button:last-child{grid-column:1/-1}
+.fb{border-left:6px solid;padding:10px 12px;border-radius:10px;margin-bottom:10px}
+.fb.ok{border-color:var(--ok);background:#e8f6ee}.fb.part{border-color:var(--part);background:#fdf0e3}.fb.bad{border-color:var(--bad);background:#fbe7ea}
+.fb strong{display:block;font-size:18px}
+.go{width:100%;min-height:50px;background:var(--k);color:var(--y)}
+#stop{position:absolute;inset:0;border-radius:18px;background:rgba(255,209,0,.97);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px}
+#stop.on{display:flex}#stop b{font:800 44px "Barlow Condensed"}
+#toast{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);background:var(--k);color:var(--y);padding:12px 16px;border-radius:10px;z-index:9;max-width:86vw;text-align:center;font-weight:600;display:none}
+#toast.on{display:block}
+
+/* Rapor */
+#report{background:#f4f4f2;color:var(--k);overflow-y:auto;-webkit-user-select:text;user-select:text}
+#report h2{font-size:clamp(34px,9vw,48px);line-height:1.05;margin:16px 0 4px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
+.tile{background:#fff;border-radius:12px;padding:12px}
+.tile small{display:block;color:#555;font-weight:600}
+.tile b{font:800 32px/1.1 "Barlow Condensed";white-space:nowrap}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:600;color:#fff}
+.ans{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;border-left:6px solid}
+.ans small{display:block;color:#555}
+@media(prefers-reduced-motion:reduce){#wind svg,#maskOv::after{animation:none}}
+</style>
+</head>
+<body>
+
+<section id="start" class="screen on">
+  <div class="stripe"></div>
+  <div class="inner">
+    <h1>Amonyak kaçağı tatbikatı</h1>
+    <p class="meta">Kimyasal senaryo · yaklaşık 10 dakika · Rol: tesis çalışanı</p>
+    <p class="note">Elinde bir gaz dedektörü ve bir kaçış maskesi var. Ne zaman ne yapacağına sen karar vereceksin. Olaylar yürüdükçe karşına çıkacak.</p>
+    <ul class="pts">
+      <li><b>1</b><div><strong>Kaçak noktası</strong> · soğutma ünitesi</div></li>
+      <li><b>2</b><div><strong>Alarm butonu</strong> · gerçek butonun yanı</div></li>
+      <li><b>3</b><div><strong>Dış kapı</strong> · acil çıkışın dışı</div></li>
+      <li><b>4</b><div><strong>Toplanma alanı</strong></div></li>
+    </ul>
+    <label class="f" for="who">Katılımcı adı (yalnızca rapora yazılır)</label>
+    <input type="text" id="who" placeholder="Ad Soyad" autocomplete="name">
+    <label class="chk"><input type="checkbox" id="motionChk" checked> Yürürken kararları beklet (önerilir)</label>
+    <div class="btns">
+      <button class="primary" id="btnCam">Kamerayı aç ve başla</button>
+      <button class="ghost" id="btnDemo">Kamerasız demo</button>
+    </div>
+    <p class="fine">Kulaklık takarsan siren, anons ve kaçak sesi daha gerçekçi olur. iPhone'da sessiz mod açıksa ses çıkmaz.<br>Kamera görüntüsü yalnızca QR okumak için cihazda işlenir, kaydedilmez.<br>Prototip: prosedürler KBRN/İSG uzmanı doğrulaması bekliyor.</p>
+  </div>
+</section>
+
+<section id="ar" class="screen">
+  <video id="cam" playsinline muted autoplay></video>
+  <canvas id="fx"></canvas>
+  <div id="maskOv"></div>
+  <div id="wind"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8v62" stroke="#ffd100" stroke-width="10" stroke-linecap="round"/><path d="M22 58l28 32 28-32" fill="none" stroke="#ffd100" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Rüzgâr kaçaktan sana doğru esiyor</div></div>
+  <div id="arrow"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="rgba(17,17,17,.75)" stroke="#ffd100" stroke-width="3"/><path d="M20 32h22M33 21l11 11-11 11" stroke="#ffd100" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Kaçak</span></div>
+  <div class="top">
+    <div class="row"><div id="goal"><span id="goalTxt"></span><button id="goalBtn"></button></div><button id="mute">Ses</button></div>
+    <div id="banner"></div>
+  </div>
+  <div class="dev" id="dev">
+    <div class="dev-head"><span>NH₃ DEDEKTÖRÜ</span><i id="led"></i></div>
+    <div class="lcd" id="lcd"><b id="ppm">0</b><small>ppm</small><div class="bar"><i id="barFill"></i></div><div id="detState">Temiz hava</div></div>
+    <div class="grip"></div>
+  </div>
+  <button id="maskBtn" aria-label="Kaçış maskesini tak"></button>
+  <div id="choice"><div id="chBody"></div><div id="stop"><b>Dur.</b><span>Karar vermek için yürümeyi bırak. Süre sen durunca işler.</span></div></div>
+  <div id="toast"></div>
+</section>
+
+<section id="report" class="screen"><div class="inner" id="repBody"></div></section>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+
+/* ---------- İkonlar ---------- */
+const IC={
+ alarm:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ toward:'<circle cx="12" cy="12" r="3"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
+ camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
+ valve:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>',
+ exit:'<rect x="4" y="3" width="10" height="18" rx="1"/><path d="M10 12h11M18 9l3 3-3 3"/>',
+ shortcut:'<path d="M4 20 20 4M20 4h-7M20 4v7"/>',
+ elevator:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 9l3-3 3 3M9 15l3 3 3-3"/>',
+ side:'<path d="M12 21V8M5 4h14M8 12l4-4 4 4"/>',
+ down:'<path d="M5 12h14M13 6l6 6-6 6"/><path d="M2 7h4M2 17h4"/>',
+ wait:'<path d="M6 2h12M6 22h12M7 2c0 6 10 6 10 10S7 16 7 22M17 2c0 6-10 6-10 10s10 4 10 10"/>',
+ low:'<path d="M3 6h6l12 12"/><path d="M15 18h6v-6"/>',
+ list:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
+ back:'<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+ home:'<path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/>',
+ water:'<path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/>',
+ rub:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ cream:'<path d="M8 3h8l-1 14H9z"/><path d="M10 17v3h4v-3"/>',
+ help:'<circle cx="8" cy="7" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M2 21v-2a5 5 0 0 1 10 0v2M13 21v-1.5a4 4 0 0 1 8 0V21"/>',
+ phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+ mask:'<path d="M12 3c-4.4 0-7 3.3-7 7.5V17c0 2.2 3.1 4 7 4s7-1.8 7-4v-6.5C19 6.3 16.4 3 12 3z"/><rect x="8" y="8" width="8" height="5" rx="2.5"/><circle cx="12" cy="17" r="1.6"/>'
+};
+const icon=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||''}</svg>`;
+
+/* ---------- Senaryo verisi: yeni senaryo = yeni veri ---------- */
+const QRN={'KBRN-KIM-1':'Kaçak noktası','KBRN-ALARM':'Alarm butonu','KBRN-KIM-2':'Dış kapı','KBRN-KIM-3':'Toplanma alanı'};
+const SOURCE_QR='KBRN-KIM-1';
+const SCN={title:'Kimyasal – amonyak kaçağı',beats:[
+ {goal:'Soğutma ünitesine git, kaçak noktası QR\'ını okut',banner:'Tatbikat başladı. Normal çalışma günü.',wait:{qr:'KBRN-KIM-1'},ppm:0,fx:'none'},
+ {banner:'Tıslama sesi ve keskin bir koku! Borudan beyaz buhar fışkırıyor.',leakStart:1,hiss:1,ppm:70,fx:'jet',
+  choice:{q:'İlk ne yaparsın?',time:15,o:[
+   {i:'alarm',t:'Alarm ver, çevreyi uyar',s:10,fb:'Doğru. Önce herkes haberdar olmalı, müdahale ekibi harekete geçmeli.'},
+   {i:'toward',t:'Kaynağa yaklaş',s:0,ppm:340,fb:'Kaynağa yaklaşmak seni en yüksek derişimin içine sokar. Kaçağın yerini müdahale ekibi bulur.'},
+   {i:'camera',t:'Fotoğraf çek',s:2,ppm:140,fb:'Zaman kaybı. Bulut yayılırken olay yerinde kalırsın ve alarm gecikir.'},
+   {i:'valve',t:'Vanayı kapat',s:0,ppm:300,fb:'Eğitimsiz ve korumasız müdahale ikinci bir kazazede yaratır. Bu, müdahale ekibinin işi.'}]}},
+ {goal:'Alarm butonunu bul, yanındaki QR\'ı okut',wait:{qr:'KBRN-ALARM'},ppm:60,fx:'jet'},
+ {banner:'Alarm çalıyor. Anons yapılıyor.',siren:1,ppm:45,fx:'jet',
+  say:'Dikkat, dikkat. Soğutma ünitesinde amonyak kaçağı. Tüm personel en yakın acil çıkıştan toplanma alanına gitsin.',
+  choice:{q:'Hangi yoldan çıkarsın?',time:15,o:[
+   {i:'exit',t:'İşaretli acil çıkış',s:10,ppm:35,fb:'Doğru. Acil çıkış yolları seni tehlikeden uzaklaştıracak şekilde planlanır.'},
+   {i:'shortcut',t:'Soğutma odasından kestirme',s:0,ppm:260,fb:'Kısa yol kaynağın içinden geçiyor. Mesafe değil, güvenli güzergâh önemli.'},
+   {i:'elevator',t:'Yük asansörü',s:2,fb:'Acil durumda asansör durabilir ve içinde mahsur kalırsın.'}]}},
+ {goal:'Acil çıkışa doğru yürü',banner:'Tahliye başladı. Acil çıkışa doğru yürü.',wait:{steps:15,time:25},ppm:30,fx:'none'},
+ {random:['arkadas','koridor']},
+ {goal:'Dış kapıya git, QR\'ı okut',wait:{qr:'KBRN-KIM-2'},ppm:22,fx:'none'},
+ {banner:'Dış kapıdasın. Rüzgâr kaçak tarafından sana doğru esiyor. Bulut geliyor!',wind:1,ppm:45,fx:'front',
+  choice:{q:'Hangi yöne gidersin?',time:15,o:[
+   {i:'side',t:'Rüzgâra dik, sonra rüzgâr üstüne',s:10,ppm:8,fb:'Doğru. Bulut rüzgârla taşınır. Rüzgâra dik çıkmak bulutun yolundan en hızlı çıkarır.'},
+   {i:'down',t:'Rüzgârla aynı yöne koş',s:0,ppm:150,fb:'Bulut da aynı yöne gidiyor, içinde kalırsın.'},
+   {i:'wait',t:'Kapıda bekle',s:0,ppm:120,fb:'Bulutun yolunda beklemek maruziyeti artırır.'},
+   {i:'low',t:'Alçak rampaya in',s:2,ppm:110,fb:'Sıvı amonyak kaçaklarında soğuk bulut bir süre yere yakın kalabilir. Çukur ve alçak alanlardan uzak dur.'}]}},
+ {goal:'Toplanma alanına git, QR\'ı okut',wait:{qr:'KBRN-KIM-3'},ppm:6,fx:'none'},
+ {banner:'Toplanma alanına ulaştın.',siren:0,hiss:0,ppm:2,fx:'none',
+  choice:{q:'Şimdi ne yaparsın?',time:20,o:[
+   {i:'list',t:'Sayıma bildir, gördüklerini anlat',s:10,fb:'Doğru. Sayım ve bilgi, ekibin seni aramak için boşuna içeri girmesini önler.'},
+   {i:'back',t:'Çantanı almaya dön',s:0,ppm:200,fb:'Tehlike bölgesine geri dönülmez. Eşya değil, can önemli.'},
+   {i:'home',t:'Eve git',s:0,fb:'Sayımda kayıp görünürsün, ekip seni içeride arar.'}]}},
+ {banner:'Gözlerin yanıyor, koluna buhar temas etmiş.',ppm:2,
+  choice:{q:'Ne yaparsın?',time:20,o:[
+   {i:'water',t:'En az 15 dk bol suyla yıka',s:10,fb:'Doğru. Amonyak göz ve ciltte yanık yapar. İlk iş bol suyla uzun süre yıkamak ve sağlık ekibine bildirmek.'},
+   {i:'rub',t:'Gözlerini ovuştur',s:0,fb:'Ovuşturmak hasarı artırır. Bol suyla yıka.'},
+   {i:'cream',t:'Krem sür',s:2,fb:'Krem kimyasalı ciltte tutar. Önce bol su.'}]}},
+ {end:1}
+]};
+/* Yolda rastgele çıkan olaylar: her oynanışta biri seçilir */
+const POOL={
+ arkadas:{banner:'Yolda öksüren, gözlerini ovuşturan bir çalışma arkadaşın var. Yürüyebiliyor.',ppm:35,fx:'none',
+  choice:{q:'Ne yaparsın?',time:12,o:[
+   {i:'help',t:'Koluna gir, birlikte çık',s:10,fb:'Doğru. Yürüyebilen birini birlikte götürmek en hızlı yardım. Gözlerini ovuşturmamasını söyle.'},
+   {i:'phone',t:'Bırak, yardım çağır',s:4,fb:'Yürüyebilen birini bırakma. Yürüyemeyen birini ise konumuyla müdahale ekibine bildir.'},
+   {i:'mask',t:'Maskeni ona ver',s:2,fb:'Kendi korumanı kaybedersen ikiniz de risk altına girersiniz.'}]}},
+ koridor:{banner:'Önündeki koridor kapısının altından yoğun buhar sızıyor!',ppm:90,fx:'front',
+  choice:{q:'Ne yaparsın?',time:12,o:[
+   {i:'exit',t:'Alternatif acil çıkışı kullan',s:10,ppm:30,fb:'Doğru. Tehlikeli güzergâhı terk et, ikinci çıkışı kullan. Herkes en az iki çıkışı bilmeli.'},
+   {i:'shortcut',t:'Hızla içinden geç',s:0,ppm:280,fb:'Buharın içinden geçmek kısa sürede yüksek doz demek.'},
+   {i:'wait',t:'Kapının önünde bekle',s:0,ppm:120,fb:'Beklemek maruziyeti artırır. Başka çıkışa yönel.'}]}}
+};
+
+/* ---------- Durum ---------- */
+const S={mode:null,bi:-1,beat:null,ppm:0,target:0,fx:'none',fxT0:0,dens:0,dose:0,doseRaw:0,mask:false,maskAt:0,leakAt:0,ans:[],t0:0,fin:false,
+ moving:false,motionCheck:true,steps:0,stepBase:0,wait:null,waitT0:0,done:new Set(),anchor:null,ori:{a:null,b:null},em:{x:0,y:0},
+ choice:null,choiceOpen:false,fbOpen:false,choiceLeft:0,choiceStart:0,hiss:0,siren:0,speaking:false,muted:false,lastToast:0,goal:''};
+const video=$('cam');let cv=$('fx'),ctx=null,det=null;
+
+function toast(m){const n=Date.now();if(n-S.lastToast<2500)return;S.lastToast=n;const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2300)}
+let bTimer=0;
+function banner(m){const b=$('banner');b.textContent=m;b.classList.add('on');clearTimeout(bTimer);bTimer=setTimeout(()=>b.classList.remove('on'),7000);if(navigator.vibrate)navigator.vibrate([120,60,120])}
+function setGoal(t){S.goal=t;$('goalTxt').textContent=t;const w=S.wait,b=$('goalBtn');b.classList.toggle('on',!!w);b.textContent=w&&w.qr?'Simüle et':'İlerle'}
+function say(t){
+  if(S.muted||!window.speechSynthesis)return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';u.rate=.95;
+   const v=speechSynthesis.getVoices().find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;
+   u.onstart=()=>S.speaking=true;u.onend=u.onerror=()=>S.speaking=false;speechSynthesis.speak(u)}catch(e){}
+}
+
+/* ---------- Olay motoru ---------- */
+function resolve(b){if(b.random){const k=b.random[Math.floor(Math.random()*b.random.length)];return Object.assign({id:k},POOL[k])}return b}
+function go(i){
+  S.bi=i;const b=resolve(SCN.beats[i]);S.beat=b;S.wait=null;
+  if(b.end)return finish();
+  if(b.ppm!=null)S.target=b.ppm;
+  if(b.fx&&b.fx!==S.fx){S.fx=b.fx;S.fxT0=performance.now()}
+  if(b.hiss!=null)S.hiss=b.hiss;if(b.siren!=null)S.siren=b.siren;
+  if(b.leakStart&&!S.leakAt)S.leakAt=Date.now();
+  $('wind').classList.toggle('on',!!b.wind);
+  if(b.banner)banner(b.banner);
+  if(b.say)setTimeout(()=>say(b.say),900);
+  if(b.wait){S.wait=b.wait;S.waitT0=Date.now();S.stepBase=S.steps}
+  setGoal(b.goal||(b.choice?'Karar ver':S.goal));
+  if(b.choice)setTimeout(()=>openChoice(b.choice),b.banner?1700:300);
+  else if(!b.wait)setTimeout(()=>go(i+1),3000);
+}
+function waitTick(){
+  const w=S.wait;if(!w||!w.steps)return;
+  const n=Math.max(0,S.steps-S.stepBase),el=(Date.now()-S.waitT0)/1000;
+  $('goalTxt').textContent=`${S.goal} · ${Math.min(n,w.steps)}/${w.steps} adım`;
+  if(n>=w.steps||el>=w.time)advanceWait();
+}
+function advanceWait(){if(!S.wait)return;if(S.wait.qr)S.done.add(S.wait.qr);S.wait=null;go(S.bi+1)}
+$('goalBtn').onclick=()=>{const w=S.wait;if(!w)return;if(w.qr)onCode(w.qr,null);else advanceWait()};
+
+/* ---------- Karar paneli ---------- */
+function openChoice(c){
+  S.choice=c;S.choiceOpen=true;S.fbOpen=false;S.choiceLeft=c.time;S.choiceStart=Date.now();
+  $('chBody').innerHTML=`<div class="ch-head"><h3>${c.q}</h3><div id="tnum">${c.time}</div></div><div class="tbar"><i id="tfill"></i></div><div class="grid ${c.o.length===3?'three':''}">${c.o.map((o,i)=>`<button data-opt="${i}">${icon(o.i)}<span>${o.t}</span></button>`).join('')}</div>`;
+  $('choice').classList.add('on');$('dev').classList.add('down');requestAnimationFrame(placeMask);
+}
+function choose(i){
+  if(!S.choiceOpen||S.fbOpen)return;const c=S.choice;
+  const o=i<0?{t:'Süre doldu, karar verilmedi',s:0,fb:'Acil durumda tereddüt etmek maruziyeti artırır. İlk refleksin hazır olmalı.'}:c.o[i];
+  if(o.ppm!=null)S.target=o.ppm;
+  S.ans.push({ctx:S.beat.banner||'',q:c.q,a:o.t,s:o.s,fb:o.fb,rt:Math.round((Date.now()-S.choiceStart)/1000)});
+  const cl=o.s===10?'ok':o.s>0?'part':'bad',lab=o.s===10?'Doğru':o.s>0?'Kısmen':'Yanlış';
+  if(o.s<10&&navigator.vibrate)navigator.vibrate(300);
+  S.fbOpen=true;
+  $('chBody').innerHTML=`<div class="fb ${cl}"><strong>${lab} · ${o.s}/10</strong>${o.fb}</div><button class="go" data-act="next">Devam</button>`;
+  requestAnimationFrame(placeMask);
+}
+function closeChoice(){S.choiceOpen=false;S.fbOpen=false;$('choice').classList.remove('on');$('dev').classList.remove('down');placeMask();go(S.bi+1)}
+$('choice').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.opt!=null)choose(+b.dataset.opt);else if(b.dataset.act==='next')closeChoice()});
+function choiceTick(dt){
+  const paused=S.motionCheck&&S.moving;$('stop').classList.toggle('on',paused&&S.choiceOpen&&!S.fbOpen);
+  if(!S.choiceOpen||S.fbOpen||paused)return;
+  S.choiceLeft-=dt;const tn=$('tnum'),tf=$('tfill');
+  if(tn)tn.textContent=Math.max(0,Math.ceil(S.choiceLeft));if(tf)tf.style.width=Math.max(0,S.choiceLeft/S.choice.time*100)+'%';
+  if(S.choiceLeft<=0)choose(-1);
+}
+/* Maske düğmesi karar paneli açıkken panelin üstüne çıkar, her zaman erişilebilir */
+function placeMask(){const m=$('maskBtn'),c=$('choice');m.style.bottom=S.choiceOpen?`calc(${c.offsetHeight+20}px + env(safe-area-inset-bottom))`:''}
+
+/* ---------- Maske ---------- */
+function maskUI(){$('maskBtn').innerHTML=icon('mask')+`<span>${S.mask?'Takılı':'Maske'}</span>`;$('maskBtn').classList.toggle('used',S.mask)}
+$('maskBtn').onclick=()=>{if(S.mask||!S.t0)return;S.mask=true;S.maskAt=Date.now();$('maskOv').classList.add('on');maskUI();if(navigator.vibrate)navigator.vibrate(80);toast('Kaçış maskesi takıldı')};
+maskUI();
+
+/* ---------- Ses: kaçak tıslaması, siren, nefes, dedektör bipi ---------- */
+const AU={};
+function auInit(){
+  try{const C=window.AudioContext||window.webkitAudioContext;const c=new C();AU.c=c;AU.m=c.createGain();AU.m.connect(c.destination);
+   const buf=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+   const noise=(type,f,q)=>{const s=c.createBufferSource();s.buffer=buf;s.loop=true;const fl=c.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const g=c.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(AU.m);s.start();return g};
+   AU.hiss=noise('bandpass',4200,.7);AU.br=noise('lowpass',650,.5);
+   const o=c.createOscillator();o.type='sawtooth';const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1800;const g=c.createGain();g.gain.value=0;o.connect(lp);lp.connect(g);g.connect(AU.m);o.start();AU.sir=o;AU.sirG=g;
+  }catch(e){AU.c=null}
+}
+let lastBeep=0;
+function auTick(ts,shown){
+  const c=AU.c;if(!c)return;const now=c.currentTime,t=ts/1000;
+  AU.m.gain.setTargetAtTime(S.muted||S.fin?0:1,now,.05);
+  AU.hiss.gain.setTargetAtTime(S.hiss&&S.fx==='jet'?Math.min(.35,(.05+S.ppm/600)*fade()):0,now,.3);
+  AU.br.gain.setTargetAtTime(S.mask?.2*Math.pow(Math.sin(Math.PI*(t%4)/4),2):0,now,.05);
+  AU.sir.frequency.setTargetAtTime(650+450*(.5+.5*Math.sin(t*2*Math.PI/1.8)),now,.05);
+  AU.sirG.gain.setTargetAtTime(S.siren?(S.speaking?.015:.055):0,now,.2);
+  if(shown>=25&&ts-lastBeep>Math.max(140,1200-shown*3)){lastBeep=ts;
+   try{const o=c.createOscillator(),g=c.createGain();o.frequency.value=2300;g.gain.value=.06;o.connect(g);g.connect(AU.m);o.start();o.stop(now+.06)}catch(e){}}
+}
+$('mute').onclick=()=>{S.muted=!S.muted;$('mute').textContent=S.muted?'Sessiz':'Ses';if(S.muted&&window.speechSynthesis)speechSynthesis.cancel();if(AU.c&&AU.c.state==='suspended')AU.c.resume()};
+
+/* ---------- Sensörler: hareket, adım, yön ---------- */
+const mags=[];let lastStep=0,prevM=9.8;
+addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity;if(!a||a.x==null)return;const m=Math.hypot(a.x,a.y,a.z);
+  mags.push(m);if(mags.length>25)mags.shift();
+  const av=mags.reduce((x,y)=>x+y,0)/mags.length,sd=Math.sqrt(mags.reduce((x,y)=>x+(y-av)**2,0)/mags.length);
+  S.moving=S.moving?sd>.7:sd>1.3;
+  const n=Date.now();if(m>11.6&&prevM<=11.6&&n-lastStep>320){S.steps++;lastStep=n}prevM=m});
+addEventListener('deviceorientation',e=>{if(e.alpha!=null){S.ori.a=e.alpha;S.ori.b=e.beta}});
+
+/* ---------- QR okuma ve kaçak noktasına sabitleme ---------- */
+const off=document.createElement('canvas'),octx=off.getContext('2d',{willReadFrequently:true});
+function v2s(x,y){const W=innerWidth,H=innerHeight,vw=video.videoWidth,vh=video.videoHeight,sc=Math.max(W/vw,H/vh);return{x:(W-vw*sc)/2+x*sc,y:(H-vh*sc)/2+y*sc,k:sc}}
+function scan(){
+  if(!video.videoWidth||S.fin)return;
+  if(det){det.detect(video).then(r=>{if(r[0]){const b=r[0].boundingBox,p=v2s(b.x+b.width/2,b.y+b.height/2);onCode(r[0].rawValue,{x:p.x,y:p.y,size:Math.max(b.width,b.height)*p.k})}}).catch(()=>{});return}
+  if(!window.jsQR)return;
+  const w=360,h=Math.round(w*video.videoHeight/video.videoWidth);off.width=w;off.height=h;octx.drawImage(video,0,0,w,h);
+  const c=jsQR(octx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'dontInvert'});
+  if(c){const k=video.videoWidth/w,L=c.location,p=v2s((L.topLeftCorner.x+L.bottomRightCorner.x)/2*k,(L.topLeftCorner.y+L.bottomRightCorner.y)/2*k);
+   onCode(c.data,{x:p.x,y:p.y,size:Math.hypot(L.topRightCorner.x-L.topLeftCorner.x,L.topRightCorner.y-L.topLeftCorner.y)*k*p.k})}
+}
+function setAnchor(g){S.anchor={x:g?g.x:innerWidth*.5,y:g?g.y:innerHeight*.5,a0:S.ori.a,b0:S.ori.b,sc:g?Math.min(2.2,Math.max(.6,g.size/140)):1,steps:S.steps}}
+function onCode(code,g){
+  code=String(code).trim();
+  if(code===SOURCE_QR&&(g||!S.anchor))setAnchor(g);
+  if(S.wait&&S.wait.qr===code){advanceWait();return}
+  if(QRN[code]&&!S.done.has(code)&&!S.choiceOpen)toast(`${QRN[code]} şimdilik değil. ${S.goal}`);
+}
+function anchorPos(){
+  const A=S.anchor;if(!A)return null;let x=A.x,y=A.y;
+  if(A.a0!=null&&S.ori.a!=null){const da=((S.ori.a-A.a0)+540)%360-180,db=S.ori.b-A.b0,ppd=innerWidth/50;x+=da*ppd;y+=db*ppd}
+  return{x,y};
+}
+/* Kaçaktan uzaklaştıkça (adım) jet küçülür ve söner */
+function fade(){return S.anchor?Math.max(.2,1-(S.steps-S.anchor.steps)/25):1}
+
+/* ---------- Buhar efekti (WebGL) ---------- */
+const FS=`#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform vec2 R,SRC,DIR;uniform float T,D,M,AGE,SC;
+float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+const mat2 RM=mat2(1.6,1.2,-1.2,1.6);
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*n(p);p=RM*p;a*=.5;}return s;}
+void main(){
+ vec2 uv=gl_FragCoord.xy/R;float t=T,f=0.,dens=0.;
+ if(M<.5){
+  vec2 p=(gl_FragCoord.xy-SRC)/R.y/SC,d=normalize(DIR),nn=vec2(-d.y,d.x);
+  float a0=max(dot(p,d),0.);p.y+=1.3*a0*a0;
+  float a=dot(p,d),b=dot(p,nn);
+  float len=.15+.85*min(AGE/3.,1.);
+  float w=.012+.36*max(a,0.);
+  float prof=exp(-b*b/(w*w))*smoothstep(-.01,.02,a)*(1.-smoothstep(len*.55,len,a));
+  float core=exp(-b*b/(w*w*.12))*exp(-max(a,0.)*9.)*smoothstep(-.01,.01,a);
+  vec2 q=p*4.5-d*t*1.7;q+=.85*vec2(fbm(q+t*.35),fbm(q+vec2(5.2,1.3)-t*.25));
+  f=fbm(q);
+  dens=max(prof*smoothstep(.3,.8,f+.32*prof),core);
+  float gx=(gl_FragCoord.x-SRC.x)/R.y/SC,sp=.12+.7*min(AGE/12.,1.);
+  float gp=(1.-smoothstep(0.,.3,uv.y))*exp(-gx*gx/(sp*sp))*min(AGE/2.5,1.);
+  vec2 g=vec2(gx*3.-t*.12,uv.y*6.);g+=.7*vec2(fbm(g*.7+t*.08),fbm(g*.7+vec2(2.,9.)-t*.06));
+  float gf=fbm(g);dens=max(dens,gp*smoothstep(.32,.78,gf)*.9);f=max(f,gf*gp);
+ }else{
+  vec2 q=(uv-vec2(.5,1.))*vec2(R.x/R.y,1.)*2.6/(1.+AGE*.05);q.y+=t*.18;
+  q+=.9*vec2(fbm(q*.8+t*.1),fbm(q*.8+vec2(3.1,7.7)-t*.12));
+  f=fbm(q);
+  float edge=1.05-.95*min(AGE/7.,1.);
+  dens=smoothstep(edge-.35,edge+.05,uv.y+.3*(f-.5))*smoothstep(.28,.72,f+.1);
+ }
+ vec3 col=mix(vec3(.66,.71,.71),vec3(.98,.99,.99),clamp(f*1.25+.05+.15*uv.y,0.,1.));
+ float A=clamp(dens*D*1.1,0.,.9);
+ gl_FragColor=vec4(col*A,A);
+}`;
+let gl=null,U=null,FXS=1;
+function mkGL(){
+  const sh=(ty,src)=>{const o=gl.createShader(ty);gl.shaderSource(o,src);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o};
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}'));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(pr));gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const u={};['R','T','SRC','D','M','AGE','DIR','SC'].forEach(k=>u[k]=gl.getUniformLocation(pr,k));return u;
+}
+try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});if(!gl)throw new Error('webgl yok');U=mkGL();FXS=.5}
+catch(e){console.warn('Buhar efekti kapalı:',e);gl=null;const c2=cv.cloneNode();cv.replaceWith(c2);cv=c2;ctx=cv.getContext('2d')}
+function resize(){cv.width=Math.round(innerWidth*FXS);cv.height=Math.round(innerHeight*FXS);if(gl)gl.viewport(0,0,cv.width,cv.height)}
+addEventListener('resize',()=>{resize();placeMask()});
+function drawFx(ts){
+  const v=S.ppm,tg=S.fx==='none'?0:(v<8?v/32:Math.min(1,.3+v/150));S.dens+=(tg-S.dens)*.04;
+  if(!gl)return;const jet=S.fx==='jet',fd=jet?fade():1,k=cv.width/innerWidth;
+  gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);if(S.dens*fd<.01)return;
+  gl.uniform2f(U.R,cv.width,cv.height);gl.uniform1f(U.T,(ts/1000)%1000);gl.uniform2f(U.SRC,S.em.x*k,(innerHeight-S.em.y)*k);
+  gl.uniform1f(U.D,S.dens*fd);gl.uniform1f(U.M,jet?0:1);gl.uniform1f(U.AGE,(performance.now()-S.fxT0)/1000);
+  gl.uniform2f(U.DIR,S.em.x>innerWidth*.6?-.9:.9,.3);gl.uniform1f(U.SC,(S.anchor?S.anchor.sc:1)*(.5+.5*fd));
+  gl.drawArrays(gl.TRIANGLES,0,3);
+}
+function arrowUI(){
+  const a=$('arrow'),W=innerWidth,H=innerHeight,p=S.em;
+  const off=S.fx==='jet'&&S.anchor&&fade()>.3&&(p.x<10||p.x>W-10||p.y<110||p.y>H-60);
+  a.classList.toggle('on',!!off);if(!off)return;
+  const x=Math.min(W-44,Math.max(44,p.x)),y=Math.min(H-200,Math.max(170,p.y));
+  a.style.left=x+'px';a.style.top=y+'px';a.querySelector('svg').style.transform=`rotate(${Math.atan2(p.y-H/2,p.x-W/2)}rad)`;
+}
+
+/* ---------- Dedektör ---------- */
+function hud(v){
+  $('ppm').textContent=Math.round(v);$('barFill').style.width=Math.min(100,Math.sqrt(v/400)*100)+'%';
+  let t='Temiz hava',cl='';
+  if(v>=300){t='IDLH: hayati tehlike';cl='alarm'}else if(v>=35){t='Kısa süreli sınır aşıldı';cl='alarm'}
+  else if(v>=25){t='Maruziyet sınırı aşıldı';cl='warn'}else if(v>=5){t='Amonyak algılandı'}
+  $('detState').textContent=t;$('lcd').className='lcd '+cl;$('led').classList.toggle('on',v>=25&&Math.floor(performance.now()/300)%2===0);
+}
+
+/* ---------- Ana döngü ---------- */
+let last=0,frame=0;
+function loop(ts){
+  const dt=last?Math.min(.1,(ts-last)/1000):0;last=ts;frame++;
+  S.ppm+=(S.target-S.ppm)*Math.min(1,dt*1.2);
+  if(S.t0&&!S.fin){S.dose+=S.ppm*dt/60*(S.mask?.05:1);S.doseRaw+=S.ppm*dt/60}
+  const shown=Math.max(0,S.ppm*(1+.05*Math.sin(ts/350))+(S.ppm>1?Math.random()*1.5:0));
+  const ap=anchorPos()||{x:innerWidth*.5,y:innerHeight*.5};S.em.x+=(ap.x-S.em.x)*.25;S.em.y+=(ap.y-S.em.y)*.25;
+  drawFx(ts);arrowUI();
+  if(frame%5===0)hud(shown);
+  auTick(ts,shown);choiceTick(dt);waitTick();
+  if(!S.fin)requestAnimationFrame(loop);
+}
+
+/* ---------- Başlat ---------- */
+async function start(cam){
+  S.motionCheck=$('motionChk').checked;S.mode=cam?'cam':'demo';
+  auInit();if(AU.c&&AU.c.resume)AU.c.resume();
+  try{if(window.speechSynthesis){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}}catch(e){}
+  for(const E of [window.DeviceMotionEvent,window.DeviceOrientationEvent])if(E&&E.requestPermission){try{await E.requestPermission()}catch(e){}}
+  $('start').classList.remove('on');$('ar').classList.add('on');
+  if(cam){
+    try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=st;await video.play();
+      if('BarcodeDetector' in window){try{det=new BarcodeDetector({formats:['qr_code']})}catch(e){det=null}}
+      setInterval(scan,300);
+    }catch(e){S.mode='demo';$('ar').classList.add('nocam');toast('Kamera açılamadı. Demo modunda devam ediliyor.')}
+  }else $('ar').classList.add('nocam');
+  S.em={x:innerWidth*.5,y:innerHeight*.5};S.t0=Date.now();resize();go(0);requestAnimationFrame(loop);
+}
+$('btnCam').onclick=()=>start(true);$('btnDemo').onclick=()=>start(false);
+
+/* ---------- Rapor ---------- */
+function fmt(ms){const s=Math.round(ms/1000);return `${Math.floor(s/60)} dk ${s%60} sn`}
+function finish(){
+  S.fin=true;S.siren=0;S.hiss=0;if(window.speechSynthesis)speechSynthesis.cancel();if(AU.c)AU.m.gain.value=0;
+  if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());
+  let ms;if(!S.maskAt)ms={s:0,a:'Maske hiç takılmadı',fb:'Kaçış maskesi tehlikeyi fark ettiğin an, tahliyeden önce takılır.'};
+  else{const d=Math.max(0,Math.round((S.maskAt-(S.leakAt||S.maskAt))/1000));
+   ms=d<=15?{s:10,a:`Kaçaktan ${d} sn sonra takıldı`,fb:'Doğru. Maske tahliyeden önce, hemen takılır.'}:d<=45?{s:5,a:`Kaçaktan ${d} sn sonra takıldı`,fb:'Geç kaldın. Belirtiler başlamadan, kaçağı fark ettiğin an tak.'}:{s:2,a:`Kaçaktan ${d} sn sonra takıldı`,fb:'Çok geç. Bu sürede ciddi maruziyet olur.'}}
+  const all=[...S.ans,{ctx:'Kişisel koruma',q:'Kaçış maskesi',a:ms.a,s:ms.s,fb:ms.fb}];
+  const max=all.length*10,got=all.reduce((a,b)=>a+b.s,0),pct=Math.round(got/max*100),who=$('who').value.trim()||'İsimsiz katılımcı';
+  const [lab,col]=pct>=85?['Başarılı','var(--ok)']:pct>=60?['Gelişmeli','var(--part)']:['Tekrar gerekli','var(--bad)'];
+  const end=Date.now(),date=new Date().toLocaleString('tr-TR'),dose=Math.round(S.dose),raw=Math.round(S.doseRaw);
+  const rep={katilimci:who,senaryo:SCN.title,tarih:date,puan:got,maksimum:max,yuzde:pct,sonuc:lab,sure_sn:Math.round((end-S.t0)/1000),doz_ppm_dk:dose,maskesiz_doz_ppm_dk:raw,kararlar:all};
+  const txt=`KBRN Tatbikat Raporu\n${who} · ${date}\n${SCN.title}\nPuan: ${got}/${max} (%${pct}) · ${lab}\nSolunan doz: ${dose} ppm·dk (maskesiz: ${raw})\nSüre: ${fmt(end-S.t0)}\n\n`+all.map((a,i)=>`${i+1}. ${a.q}\n   ${a.a} (${a.s}/10)`).join('\n');
+  $('repBody').innerHTML=`<div class="stripe" style="margin:0 calc(-1*max(5vw,18px))"></div>
+   <h2>Tatbikat raporu</h2><p>${who} · ${date}<br>${SCN.title}</p>
+   <span class="badge" style="background:${col}">%${pct} · ${lab}</span>
+   <div class="tiles">
+    <div class="tile"><small>Karar puanı</small><b>${got}/${max}</b></div>
+    <div class="tile"><small>Solunan doz</small><b>${dose} ppm·dk</b></div>
+    <div class="tile"><small>Maskesiz olsaydı</small><b>${raw} ppm·dk</b></div>
+    <div class="tile"><small>Toplam süre</small><b>${fmt(end-S.t0)}</b></div>
+   </div>
+   <p class="fine" style="margin-top:0">Doz, ortamdaki derişimle sürenin çarpımıdır. Maskenin maruziyeti %95 azalttığı varsayıldı (eğitim amaçlı basitleştirme).</p>
+   ${all.map(a=>`<div class="ans" style="border-color:${a.s===10?'var(--ok)':a.s>0?'var(--part)':'var(--bad)'}"><small>${a.ctx} · ${a.s}/10${a.rt!=null?` · ${a.rt} sn`:''}</small><strong>${a.q}</strong><br>${a.a}<small>${a.fb}</small></div>`).join('')}
+   <div class="btns"><button class="primary" id="cp">Raporu kopyala</button><button class="ghost" id="dl">JSON olarak indir</button><button class="ghost" id="again">Yeniden başla</button></div>
+   <p class="fine">Kamera görüntüsü kaydedilmedi. Rapor yalnızca bu cihazda oluşturuldu.</p>`;
+  $('ar').classList.remove('on');$('report').classList.add('on');
+  $('cp').onclick=()=>navigator.clipboard.writeText(txt).then(()=>{$('cp').textContent='Kopyalandı'}).catch(()=>{$('cp').textContent='Kopyalanamadı'});
+  $('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(rep,null,2)],{type:'application/json'}));a.download=`kbrn-rapor-${Date.now()}.json`;a.click()};
+  $('again').onclick=()=>location.reload();
+}
+}
+</script>
+</body>
+</html>
