@@ -3,120 +3,143 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>KBRN Tatbikat – Amonyak Kaçağı</title>
+<title>KBRN Görev: Soğuk Depoda Amonyak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <style>
-:root{--y:#ffd100;--k:#111;--w:#fff;--ok:#1f9d55;--bad:#d7263d;--part:#f28c28;--glass:rgba(17,17,17,.8)}
+:root{--y:#ffd100;--k:#2C2C2A;--w:#fff;--ok:#1f9d55;--bad:#d7263d;--part:#f28c28;--glass:rgba(20,20,20,.82);--cream:#FAEEDA}
 *{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--k);color:var(--w);font:16px/1.45 Barlow,system-ui,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;background:#111;color:var(--w);font:16px/1.45 Barlow,system-ui,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none}
 h1,h2,h3{font-family:"Barlow Condensed",Barlow,sans-serif;letter-spacing:.01em}
 button{font:600 16px Barlow,sans-serif;border:0;border-radius:12px;cursor:pointer;color:inherit;background:none}
 button:focus-visible,input:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+button:disabled{opacity:.45;cursor:default}
 .screen{position:fixed;inset:0;display:none;flex-direction:column}.screen.on{display:flex}
+.stripe{height:20px;flex:none;background:repeating-linear-gradient(-45deg,var(--k) 0 16px,var(--y) 16px 32px)}
+.inner{padding:20px max(5vw,16px) calc(24px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;width:100%}
+.btn{min-height:52px;padding:0 18px;border:4px solid var(--k);border-radius:14px;font-weight:800;box-shadow:0 5px 0 var(--k);transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--k)}
+.btn.dark{background:var(--k);color:var(--y)}.btn.light{background:#fff;color:var(--k)}
+.fine{font-size:13px;opacity:.8}
 
 /* Başlangıç */
 #start{background:var(--y);color:var(--k);overflow-y:auto}
-.stripe{height:22px;flex:none;background:repeating-linear-gradient(-45deg,var(--k) 0 18px,var(--y) 18px 36px)}
-.inner{padding:22px max(5vw,18px) calc(28px + env(safe-area-inset-bottom));max-width:620px;margin:0 auto;width:100%}
-#start h1{font-size:clamp(40px,11vw,60px);line-height:1;margin:16px 0 8px;font-weight:800}
-.meta{font-weight:600;margin:0 0 16px}
-.pts{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:8px}
-.pts li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;background:rgba(0,0,0,.07);padding:10px 12px;border-radius:10px}
-.pts b{font:800 22px/40px "Barlow Condensed";background:var(--k);color:var(--y);border-radius:8px;text-align:center}
-.note{background:var(--k);color:var(--y);border-radius:12px;padding:12px 14px;font-weight:600;margin:0 0 14px}
-label.f{display:block;font-weight:600;margin:12px 0 6px}
-input[type=text]{width:100%;font:16px Barlow;padding:12px;border:2px solid var(--k);border-radius:10px;background:#fff;-webkit-user-select:text;user-select:text}
-.chk{display:flex;gap:10px;align-items:center;margin:14px 0;font-weight:600}.chk input{width:24px;height:24px}
-.btns{display:grid;gap:10px;margin-top:14px}
-.btns button{min-height:52px}
-.primary{background:var(--k);color:var(--y)}
-.ghost{color:var(--k);border:2px solid var(--k)}
-.fine{font-size:13px;margin-top:16px;opacity:.8}
+#start h1{font-size:clamp(40px,11vw,62px);line-height:.98;margin:14px 0 8px;font-weight:800}
+.tag{display:inline-block;background:var(--k);color:var(--y);font-weight:800;padding:4px 10px;border-radius:8px;font-size:14px;margin-bottom:6px}
+.brief{background:#fff;border:4px solid var(--k);border-radius:16px;padding:14px;margin:12px 0}
+.brief b{font-family:"Barlow Condensed";font-size:20px;display:block}
+label.f{display:block;font-weight:800;margin:12px 0 6px}
+input[type=text]{width:100%;font:16px Barlow;padding:12px;border:4px solid var(--k);border-radius:12px;background:#fff;-webkit-user-select:text;user-select:text}
+.chk{display:flex;gap:10px;align-items:center;margin:12px 0;font-weight:600}.chk input{width:24px;height:24px}
+.col{display:grid;gap:12px;margin-top:12px}
+
+/* Çanta */
+#bag{background:var(--cream);color:var(--k);overflow-y:auto}
+#bag h2{font-size:38px;line-height:1;margin:12px 0 4px}
+.bagbar{position:sticky;top:0;background:var(--cream);padding:10px 0;display:flex;gap:10px;align-items:center;z-index:2}
+.bagbar .count{font:800 28px "Barlow Condensed";flex:1}
+.slots{display:flex;gap:6px}.slots i{width:16px;height:16px;border-radius:5px;border:3px solid var(--k);background:#fff}.slots i.on{background:var(--y)}
+.grid8{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:#fff;border:4px solid var(--k);border-radius:16px;padding:10px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;box-shadow:0 5px 0 var(--k);transition:transform .1s,box-shadow .1s,background .15s}
+.card svg{width:86px;height:86px}
+.card b{font-size:15px;line-height:1.15}
+.card small{font-size:12px;opacity:.7}
+.card.on{background:var(--y);transform:translateY(3px);box-shadow:0 2px 0 var(--k)}
 
 /* AR */
 #ar{background:#000}
 #ar.nocam{background:radial-gradient(120% 80% at 50% 0%,#3b4348,#121518 70%)}
-#ar.nocam::before{content:"";position:absolute;inset:55% -20% 0;background:repeating-linear-gradient(90deg,rgba(255,209,0,.18) 0 2px,transparent 2px 80px),repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 2px,transparent 2px 60px);transform:perspective(400px) rotateX(60deg);transform-origin:top}
+#ar.nocam::before{content:"";position:absolute;inset:50% -20% 0;background:repeating-linear-gradient(90deg,rgba(255,209,0,.18) 0 2px,transparent 2px 80px),repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 2px,transparent 2px 60px);transform:perspective(400px) rotateX(60deg);transform-origin:top}
 #cam,#fx{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-#maskOv{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .8s;z-index:2;background:radial-gradient(ellipse 60% 44% at 50% 46%,transparent 64%,rgba(8,10,10,.6) 82%,rgba(4,5,5,.97) 100%)}
+.ov{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s}
+#hurt{z-index:2;background:radial-gradient(ellipse 70% 60% at 50% 50%,transparent 55%,rgba(215,38,61,.85) 100%)}
+#maskOv{z-index:2;background:radial-gradient(ellipse 60% 44% at 50% 46%,transparent 64%,rgba(8,10,10,.6) 82%,rgba(4,5,5,.97) 100%)}
 #maskOv.on{opacity:1}
 #maskOv::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 48% 34% at 50% 62%,rgba(255,255,255,.4),transparent 70%);opacity:0;animation:fog 4s ease-in-out infinite}
 @keyframes fog{0%,100%{opacity:0}45%{opacity:.5}}
+#dark{z-index:2;background:rgba(0,0,0,.93);transition:opacity .4s}
+#dark.on{opacity:1}#dark.lit{background:radial-gradient(circle 32vmax at 50% 45%,rgba(0,0,0,.05),rgba(0,0,0,.93) 70%)}
+#flash{z-index:8;background:rgba(215,38,61,.55)}
 .top{position:absolute;left:0;right:0;top:0;z-index:5;padding:calc(10px + env(safe-area-inset-top)) 12px 0;display:grid;gap:8px}
 .row{display:flex;gap:8px;align-items:stretch}
-#goal{flex:1;display:flex;gap:8px;align-items:center;background:var(--y);color:var(--k);border-radius:14px;padding:6px 6px 6px 14px;font-weight:600;font-size:15px;line-height:1.25;min-height:50px}
+.hp{flex:1;background:var(--glass);border-radius:14px;padding:8px 12px;display:flex;align-items:center;gap:10px}
+.hp span{font:800 15px "Barlow Condensed";letter-spacing:.02em}
+.hpbar{flex:1;height:14px;border-radius:7px;background:#3a3a3a;border:2px solid #000;overflow:hidden}
+#hpFill{display:block;height:100%;width:100%;background:#4cd17f;transition:width .3s,background .3s}
+#hpNum{font:800 20px "Barlow Condensed";width:34px;text-align:right;font-variant-numeric:tabular-nums}
+#mute{background:var(--glass);color:var(--w);padding:0 12px;font-size:14px;min-width:60px}
+#goal{display:flex;gap:6px;align-items:center;background:var(--y);color:var(--k);border-radius:14px;padding:6px 6px 6px 14px;font-weight:800;font-size:15px;line-height:1.2;min-height:48px;border:3px solid var(--k)}
 #goalTxt{flex:1}
-#goalBtn{background:var(--k);color:var(--y);padding:0 12px;min-height:38px;font-size:14px;display:none;white-space:nowrap}
-#goalBtn.on{display:block}
-#mute{background:var(--glass);color:var(--w);padding:0 12px;font-size:14px;min-width:64px}
-#banner{background:var(--glass);border-left:5px solid var(--bad);border-radius:12px;padding:10px 12px;font-weight:600;transform:translateY(-10px);opacity:0;transition:.35s;pointer-events:none}
+#goal button{background:var(--k);color:var(--y);padding:0 10px;min-height:36px;font-size:13px;white-space:nowrap}
+#banner{background:var(--glass);border-left:6px solid var(--bad);border-radius:0;padding:10px 12px;font-weight:600;transform:translateY(-10px);opacity:0;transition:.35s;pointer-events:none}
 #banner.on{transform:none;opacity:1}
 
-/* Eldeki dedektör */
-.dev{position:absolute;left:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:4;width:150px;padding:9px 10px 12px;background:linear-gradient(160deg,#ffe04a,#e3b400);border:3px solid #1a1a1a;border-radius:18px 18px 26px 26px;box-shadow:0 12px 30px rgba(0,0,0,.55),inset 0 -6px 0 rgba(0,0,0,.18);color:#1a1a1a;transform:rotate(-5deg);transform-origin:bottom left;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
-.dev.down{transform:translateY(135%) rotate(-5deg)}
-.dev-head{display:flex;justify-content:space-between;align-items:center;font:800 14px "Barlow Condensed";margin-bottom:6px}
-#led{width:12px;height:12px;border-radius:50%;background:#2c5a2c;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
-#led.on{background:#ff2d2d;box-shadow:0 0 12px #ff2d2d}
-.lcd{background:#b9c9a3;color:#15200f;border-radius:8px;padding:5px 8px 6px;border:3px solid #333;box-shadow:inset 0 2px 6px rgba(0,0,0,.35);transition:background .3s}
-.lcd.warn{background:#e6d27a}.lcd.alarm{background:#f2a0a0;color:#3a0000}
-#ppm{font:800 38px/1 "Barlow Condensed";font-variant-numeric:tabular-nums}
-.lcd small{font-weight:600;margin-left:3px}
-.bar{height:6px;background:rgba(0,0,0,.18);border-radius:3px;margin:4px 0 3px;overflow:hidden}
-#barFill{display:block;height:100%;width:0;background:currentColor}
-#detState{font-size:12px;font-weight:600;line-height:1.2;min-height:2.4em}
-.grip{height:8px;margin:8px 18px 0;border-radius:4px;background:repeating-linear-gradient(90deg,#1a1a1a 0 4px,transparent 4px 8px);opacity:.45}
-
-/* Maske */
-#maskBtn{position:absolute;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:7;width:86px;padding:8px 0 6px;background:var(--glass);border:3px solid var(--y);border-radius:20px;color:var(--w);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:14px;transition:bottom .4s cubic-bezier(.3,.7,.2,1)}
-#maskBtn svg{width:46px;height:46px;color:var(--y)}
-#maskBtn.used{border-color:var(--ok)}#maskBtn.used svg{color:#7fe0a5}
-
-/* Kaçak yön oku */
+/* Elde tutulan eşya + eşya çubuğu */
+.hand{position:absolute;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));z-index:4;width:190px;margin-left:-95px;text-align:center;transition:transform .3s cubic-bezier(.3,.7,.2,1)}
+.hand.down{transform:translateY(160%)}
+#held{width:190px;height:190px;padding:0;display:block;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55))}
+#held svg{width:100%;height:100%}
+@keyframes bob{50%{transform:translateY(5px) rotate(-1.5deg)}}
+#heldLab{display:inline-block;margin-top:2px;background:var(--glass);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:600}
+.hotbar{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:8px 12px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:8px;transition:transform .3s}
+.hotbar.down{transform:translateY(130%)}
+.slot{position:relative;width:70px;height:70px;background:var(--cream);border:4px solid var(--k);border-radius:16px;padding:4px;box-shadow:0 4px 0 var(--k)}
+.slot svg{width:100%;height:100%}
+.slot.sel{background:var(--y);transform:translateY(-6px)}
+.slot em{position:absolute;right:-6px;top:-8px;background:var(--ok);color:#fff;font:800 11px Barlow;font-style:normal;padding:2px 6px;border-radius:8px;border:2px solid var(--k)}
+.slot em.r{background:var(--bad)}
 #arrow{position:absolute;z-index:3;width:60px;height:60px;margin:-30px 0 0 -30px;display:none;pointer-events:none}
-#arrow.on{display:block}
-#arrow svg{width:60px;height:60px;filter:drop-shadow(0 2px 4px #000)}
-#arrow span{position:absolute;top:62px;left:50%;transform:translateX(-50%);font-weight:600;font-size:13px;white-space:nowrap;text-shadow:0 1px 3px #000}
-#wind{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);z-index:3;text-align:center;font-weight:600;display:none;text-shadow:0 1px 4px #000;width:80%}
-#wind.on{display:block}
-#wind svg{width:100px;height:100px;animation:blow 1.6s ease-in-out infinite}
+#arrow.on{display:block}#arrow svg{width:60px;height:60px;filter:drop-shadow(0 2px 4px #000)}
+#arrow span{position:absolute;top:62px;left:50%;transform:translateX(-50%);font-weight:800;font-size:13px;white-space:nowrap;text-shadow:0 1px 3px #000}
+#wind{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);z-index:3;text-align:center;font-weight:800;display:none;text-shadow:0 1px 4px #000;width:80%}
+#wind.on{display:block}#wind svg{width:96px;height:96px;animation:blow 1.6s ease-in-out infinite}
 @keyframes blow{50%{transform:translateY(10px)}}
 
-/* Karar paneli */
-#choice{position:absolute;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:6;background:#fff;color:var(--k);border-radius:18px;padding:14px;transform:translateY(125%);transition:transform .4s cubic-bezier(.3,.7,.2,1);box-shadow:0 -6px 30px rgba(0,0,0,.35);max-height:62vh;overflow-y:auto}
-#choice.on{transform:none}
-.ch-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-.ch-head h3{flex:1;margin:0;font-size:24px;line-height:1.1}
-#tnum{flex:none;font:800 24px "Barlow Condensed";width:48px;height:48px;border-radius:50%;border:3px solid var(--k);display:grid;place-items:center;font-variant-numeric:tabular-nums}
-.tbar{height:5px;background:#eee;border-radius:3px;margin-bottom:10px;overflow:hidden}
-#tfill{display:block;height:100%;background:var(--bad);width:100%}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
-.grid button{background:#f2f2f2;border:2px solid #e2e2e2;min-height:84px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;line-height:1.2;color:var(--k)}
-.grid button svg{width:30px;height:30px}
-.grid button:active{border-color:var(--k);background:#fff6cc}
-.grid.three button:last-child{grid-column:1/-1}
-.fb{border-left:6px solid;padding:10px 12px;border-radius:10px;margin-bottom:10px}
+/* Panel */
+#panel{position:absolute;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:7;background:#fff;color:var(--k);border:4px solid var(--k);border-radius:20px;padding:14px;transform:translateY(130%);transition:transform .35s cubic-bezier(.3,.7,.2,1);box-shadow:0 8px 0 var(--k);max-height:66vh;overflow-y:auto}
+#panel.on{transform:none}
+.ph{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.ph h3{flex:1;margin:0;font-size:25px;line-height:1.08}
+#tnum{flex:none;font:800 24px "Barlow Condensed";width:48px;height:48px;border-radius:50%;border:4px solid var(--k);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.tbar{height:6px;background:#eee;border-radius:3px;margin-bottom:10px;overflow:hidden}#tfill{display:block;height:100%;background:var(--bad);width:100%}
+.opts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.opts.one{grid-template-columns:minmax(0,1fr)}
+.opts button{background:#f4f1ea;border:3px solid var(--k);min-height:76px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;line-height:1.2;color:var(--k)}
+.opts.one button{flex-direction:row;justify-content:flex-start;text-align:left;min-height:60px;padding:10px 12px}
+.opts button svg{width:30px;height:30px;flex:none}
+.opts button:active:not(:disabled){background:#fff3b0}
+.opts.three button:last-child{grid-column:1/-1}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid var(--k);flex:none}
+.fb{border-left:6px solid;padding:10px 12px;margin-bottom:10px}
 .fb.ok{border-color:var(--ok);background:#e8f6ee}.fb.part{border-color:var(--part);background:#fdf0e3}.fb.bad{border-color:var(--bad);background:#fbe7ea}
 .fb strong{display:block;font-size:18px}
-.go{width:100%;min-height:50px;background:var(--k);color:var(--y)}
-#stop{position:absolute;inset:0;border-radius:18px;background:rgba(255,209,0,.97);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px}
-#stop.on{display:flex}#stop b{font:800 44px "Barlow Condensed"}
-#toast{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);background:var(--k);color:var(--y);padding:12px 16px;border-radius:10px;z-index:9;max-width:86vw;text-align:center;font-weight:600;display:none}
+.go{width:100%}
+#stop{position:absolute;inset:0;border-radius:16px;background:rgba(255,209,0,.97);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px}
+#stop.on{display:flex}#stop b{font:800 46px "Barlow Condensed"}
+#toast{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);background:var(--k);color:var(--y);padding:12px 16px;border-radius:12px;z-index:9;max-width:86vw;text-align:center;font-weight:800;display:none;border:3px solid var(--y)}
 #toast.on{display:block}
+#faint{position:absolute;inset:0;z-index:10;background:rgba(10,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:14px}
+#faint.on{display:flex}#faint h2{font-size:52px;margin:0;color:#ff6b6b}
 
-/* Rapor */
-#report{background:#f4f4f2;color:var(--k);overflow-y:auto;-webkit-user-select:text;user-select:text}
-#report h2{font-size:clamp(34px,9vw,48px);line-height:1.05;margin:16px 0 4px}
-.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
-.tile{background:#fff;border-radius:12px;padding:12px}
-.tile small{display:block;color:#555;font-weight:600}
-.tile b{font:800 32px/1.1 "Barlow Condensed";white-space:nowrap}
-.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:600;color:#fff}
-.ans{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;border-left:6px solid}
+/* Sonuç */
+#result{background:var(--cream);color:var(--k);overflow-y:auto;-webkit-user-select:text;user-select:text}
+#result h2{font-size:clamp(36px,10vw,50px);line-height:1;margin:14px 0 6px}
+.stars{display:flex;gap:10px;margin:10px 0 4px}
+.star{flex:1;background:#fff;border:4px solid var(--k);border-radius:16px;padding:10px 6px;text-align:center;box-shadow:0 4px 0 var(--k)}
+.star svg{width:44px;height:44px}.star small{display:block;font-weight:600;font-size:13px;line-height:1.2}
+.rule{background:var(--k);color:#fff;border-radius:20px;padding:16px;margin:16px 0;display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;border:4px solid var(--k)}
+.rule svg{width:96px;height:96px;background:var(--cream);border-radius:14px}
+.rule small{color:var(--y);font-weight:800}
+.rule b{display:block;font:800 30px/1.02 "Barlow Condensed"}
+.rules{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:6px}
+.rules li{background:#fff;border:3px solid var(--k);border-radius:12px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-weight:600}
+.rules li i{font-style:normal;font:800 18px "Barlow Condensed";width:24px;text-align:center}
+.ans{background:#fff;border-left:6px solid;padding:10px 12px;margin-bottom:8px}
 .ans small{display:block;color:#555}
-@media(prefers-reduced-motion:reduce){#wind svg,#maskOv::after{animation:none}}
+.gaps{background:#fff;border:3px dashed var(--k);border-radius:14px;padding:12px;margin:16px 0}
+.gaps p{margin:4px 0}.lv{font-weight:800;padding:1px 6px;border-radius:6px;color:#fff;font-size:12px;margin-right:6px}
+@media(prefers-reduced-motion:reduce){#held,#wind svg,#maskOv::after{animation:none}}
 </style>
 </head>
 <body>
@@ -124,268 +147,414 @@ input[type=text]{width:100%;font:16px Barlow;padding:12px;border:2px solid var(-
 <section id="start" class="screen on">
   <div class="stripe"></div>
   <div class="inner">
-    <h1>Amonyak kaçağı tatbikatı</h1>
-    <p class="meta">Kimyasal senaryo · yaklaşık 10 dakika · Rol: tesis çalışanı</p>
-    <p class="note">Elinde bir gaz dedektörü ve bir kaçış maskesi var. Ne zaman ne yapacağına sen karar vereceksin. Olaylar yürüdükçe karşına çıkacak.</p>
-    <ul class="pts">
-      <li><b>1</b><div><strong>Kaçak noktası</strong> · soğutma ünitesi</div></li>
-      <li><b>2</b><div><strong>Alarm butonu</strong> · gerçek butonun yanı</div></li>
-      <li><b>3</b><div><strong>Dış kapı</strong> · acil çıkışın dışı</div></li>
-      <li><b>4</b><div><strong>Toplanma alanı</strong></div></li>
-    </ul>
-    <label class="f" for="who">Katılımcı adı (yalnızca rapora yazılır)</label>
+    <span class="tag">GÖREV 1</span>
+    <h1 id="mTitle">Soğuk depoda amonyak</h1>
+    <div class="brief"><b>Durum</b><span id="mBrief"></span></div>
+    <div class="brief"><b>Nasıl oynanır</b>Çantana 4 eşya seç. Görevde elindeki eşyayı alttaki çubuktan değiştir, kullanmak için eşyaya dokun. Kararların çoğunu eşyalarla ve yürüdüğün kapıyla vereceksin. Sağlık barını sıfırlama.</div>
+    <label class="f" for="who">Adın (yalnızca rapora yazılır)</label>
     <input type="text" id="who" placeholder="Ad Soyad" autocomplete="name">
     <label class="chk"><input type="checkbox" id="motionChk" checked> Yürürken kararları beklet (önerilir)</label>
-    <div class="btns">
-      <button class="primary" id="btnCam">Kamerayı aç ve başla</button>
-      <button class="ghost" id="btnDemo">Kamerasız demo</button>
+    <div class="col">
+      <button class="btn dark" id="toBagCam">Kamerayla oyna</button>
+      <button class="btn light" id="toBagDemo">Kamerasız demo</button>
     </div>
-    <p class="fine">Kulaklık takarsan siren, anons ve kaçak sesi daha gerçekçi olur. iPhone'da sessiz mod açıksa ses çıkmaz.<br>Kamera görüntüsü yalnızca QR okumak için cihazda işlenir, kaydedilmez.<br>Prototip: prosedürler KBRN/İSG uzmanı doğrulaması bekliyor.</p>
+    <p class="fine">Kulaklık önerilir. iPhone'da sessiz mod açıksa ses çıkmaz. Kamera görüntüsü yalnızca QR okumak için cihazda işlenir, kaydedilmez. Prototip: içerik uzman doğrulaması bekliyor.</p>
+  </div>
+</section>
+
+<section id="bag" class="screen">
+  <div class="stripe"></div>
+  <div class="inner">
+    <h2>Çantanı hazırla</h2>
+    <p style="margin:0">Dolapta 8 eşya var, çantana yalnızca 4'ü sığıyor. Ne olacağını bilmiyorsun.</p>
+    <div class="bagbar"><span class="count" id="bagCount">0/4</span><span class="slots" id="bagSlots"></span><button class="btn dark" id="bagGo" disabled>Göreve başla</button></div>
+    <div class="grid8" id="bagGrid"></div>
   </div>
 </section>
 
 <section id="ar" class="screen">
   <video id="cam" playsinline muted autoplay></video>
   <canvas id="fx"></canvas>
-  <div id="maskOv"></div>
+  <div class="ov" id="hurt"></div><div class="ov" id="maskOv"></div><div class="ov" id="dark"></div><div class="ov" id="flash"></div>
   <div id="wind"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8v62" stroke="#ffd100" stroke-width="10" stroke-linecap="round"/><path d="M22 58l28 32 28-32" fill="none" stroke="#ffd100" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Rüzgâr kaçaktan sana doğru esiyor</div></div>
-  <div id="arrow"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="rgba(17,17,17,.75)" stroke="#ffd100" stroke-width="3"/><path d="M20 32h22M33 21l11 11-11 11" stroke="#ffd100" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Kaçak</span></div>
+  <div id="arrow"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="rgba(20,20,20,.75)" stroke="#ffd100" stroke-width="3"/><path d="M20 32h22M33 21l11 11-11 11" stroke="#ffd100" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Kaçak</span></div>
   <div class="top">
-    <div class="row"><div id="goal"><span id="goalTxt"></span><button id="goalBtn"></button></div><button id="mute">Ses</button></div>
+    <div class="row"><div class="hp"><span>SAĞLIK</span><div class="hpbar"><i id="hpFill"></i></div><b id="hpNum">100</b></div><button id="mute">Ses</button></div>
+    <div id="goal"><span id="goalTxt"></span><span id="goalBtns"></span></div>
     <div id="banner"></div>
   </div>
-  <div class="dev" id="dev">
-    <div class="dev-head"><span>NH₃ DEDEKTÖRÜ</span><i id="led"></i></div>
-    <div class="lcd" id="lcd"><b id="ppm">0</b><small>ppm</small><div class="bar"><i id="barFill"></i></div><div id="detState">Temiz hava</div></div>
-    <div class="grip"></div>
-  </div>
-  <button id="maskBtn" aria-label="Kaçış maskesini tak"></button>
-  <div id="choice"><div id="chBody"></div><div id="stop"><b>Dur.</b><span>Karar vermek için yürümeyi bırak. Süre sen durunca işler.</span></div></div>
+  <div class="hand" id="hand"><button id="held" aria-label="Elindeki eşyayı kullan"></button><span id="heldLab"></span></div>
+  <div class="hotbar" id="hotbar"></div>
+  <div id="panel"><div id="pBody"></div><div id="stop"><b>Dur.</b><span>Karar vermek için yürümeyi bırak. Süre sen durunca işler.</span></div></div>
   <div id="toast"></div>
+  <div id="faint"><h2>Bayıldın</h2><p>Maruziyet çok yüksekti. Ekip seni dışarı taşıdı.</p><p id="faintWhy" style="font-weight:600"></p><button class="btn light" id="retry">Yeniden dene</button></div>
 </section>
 
-<section id="report" class="screen"><div class="inner" id="repBody"></div></section>
+<section id="result" class="screen"><div class="inner" id="resBody"></div></section>
 
 <script>
 {
 const $=id=>document.getElementById(id);
 
-/* ---------- İkonlar ---------- */
-const IC={
- alarm:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
- toward:'<circle cx="12" cy="12" r="3"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
- camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
- valve:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>',
- exit:'<rect x="4" y="3" width="10" height="18" rx="1"/><path d="M10 12h11M18 9l3 3-3 3"/>',
- shortcut:'<path d="M4 20 20 4M20 4h-7M20 4v7"/>',
- elevator:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 9l3-3 3 3M9 15l3 3 3-3"/>',
- side:'<path d="M12 21V8M5 4h14M8 12l4-4 4 4"/>',
- down:'<path d="M5 12h14M13 6l6 6-6 6"/><path d="M2 7h4M2 17h4"/>',
- wait:'<path d="M6 2h12M6 22h12M7 2c0 6 10 6 10 10S7 16 7 22M17 2c0 6-10 6-10 10s10 4 10 10"/>',
- low:'<path d="M3 6h6l12 12"/><path d="M15 18h6v-6"/>',
- list:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
- back:'<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
- home:'<path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/>',
- water:'<path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/>',
- rub:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
- cream:'<path d="M8 3h8l-1 14H9z"/><path d="M10 17v3h4v-3"/>',
- help:'<circle cx="8" cy="7" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M2 21v-2a5 5 0 0 1 10 0v2M13 21v-1.5a4 4 0 0 1 8 0V21"/>',
- phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
- mask:'<path d="M12 3c-4.4 0-7 3.3-7 7.5V17c0 2.2 3.1 4 7 4s7-1.8 7-4v-6.5C19 6.3 16.4 3 12 3z"/><rect x="8" y="8" width="8" height="5" rx="2.5"/><circle cx="12" cy="17" r="1.6"/>'
+/* ======================================================================
+   1) VERİ: tehlike profili, tesis profili, KKD kütüphanesi
+   Platformda bunları İSG uzmanı panelden girecek. Burada sabit.
+   ====================================================================== */
+const HAZ={id:'nh3',ad:'Amonyak',hal:'sivilastirilmis-gaz',yogunluk:'hafif',gorunur:true,aile:'bulut',kaynak:'ic',
+  filtre:'K',sogukYanik:true,esik:{koku:5,tw:25,stel:35,idlh:300},gozYikama:15,
+  altin:'Amonyakta YEŞİL filtre'};
+const SITE={tip:'Soğuk depo',avlu:true,katli:false,bodrum:false,asansor:false,cikis:2,toplanma:1,maskeEgitimi:true,
+  olanak:{alarm:true,anons:false,telsiz:true,flama:true,gozDusu:true,acilDus:false,revir:false,ilkYardimci:true},
+  kkd:['dedektor','maske','filtre-K','filtre-A','filtre-B','ffp2','eldiven-kriyo','telsiz','fener','sondurucu','bez'],
+  yer:{kacak:'Soğutma ünitesi',alarm:'Koridor alarm butonu',diskapi:'Yükleme rampası dış kapısı',toplanma:'Ön avlu toplanma alanı',kkA:'Soğutma odası kapısı',kkB:'Acil çıkış koridoru kapısı'}};
+const FILT={K:{ad:'Yeşil (K)',renk:'#639922',ic:'#27500A',korur:'amonyak, aminler'},A:{ad:'Kahverengi (A)',renk:'#8B5A2B',ic:'#4A2C10',korur:'organik buhar'},
+  B:{ad:'Gri (B)',renk:'#B4B2A9',ic:'#5F5E5A',korur:'inorganik gaz'},E:{ad:'Sarı (E)',renk:'#EF9F27',ic:'#854F0B',korur:'asit gazları'}};
+const LIB={
+  dedektor:{ad:'NH₃ dedektörü',kisa:'Dedektör',korur:['olcum']},
+  maske:{ad:'Tam yüz gaz maskesi',kisa:'Gaz maskesi',korur:['solunum-filtreli','goz']},
+  ffp2:{ad:'Toz maskesi FFP2',kisa:'Toz maskesi',korur:['partikul']},
+  'eldiven-kriyo':{ad:'Kriyojenik eldiven',kisa:'Eldiven',korur:['soguk']},
+  telsiz:{ad:'Telsiz',kisa:'Telsiz',korur:['haber']},
+  fener:{ad:'El feneri',kisa:'Fener',korur:['karanlik']},
+  sondurucu:{ad:'Yangın söndürücü',kisa:'Söndürücü',korur:['yangin']},
+  bez:{ad:'Islak bez',kisa:'Islak bez',korur:[]}
 };
+
+/* ======================================================================
+   2) GÖREV ÜRETİCİ: tehlike + tesis + şablonlar -> görev
+   ====================================================================== */
+const Q={kacak:'KBRN-NH3-KACAK',alarm:'KBRN-NH3-ALARM',kkA:'KBRN-NH3-KK-A',kkB:'KBRN-NH3-KK-B',dis:'KBRN-NH3-DISKAPI',top:'KBRN-NH3-TOPLANMA'};
+const REPORT={
+  kacak:{q:'Telsizle ne dersin?',o:[
+    {i:'radio',t:`"${SITE.yer.kacak} yanında amonyak kaçağı, bir kişi etkilendi, tahliye ediyorum."`,s:10,fb:'Ne, nerede, kaç kişi. Ekip neyle karşılaşacağını bilerek gelir.'},
+    {i:'radio',t:'"Acil! Gaz var, hemen gelin!"',s:4,fb:'Panik var, bilgi yok. Ne gazı, nerede, kaç kişi?'},
+    {i:'radio',t:'"Galiba bir koku var, bakar mısınız?"',s:0,fb:'Belirsiz bildirim müdahaleyi geciktirir. Net konuş.'}]},
+  sayim:{q:'Sayım sorumlusuna ne bildirirsin?',o:[
+    {i:'list',t:'"Toplanma alanındayım. Kaçak soğutma ünitesinde, yolda bir arkadaşın gözü etkilendi."',s:10,fb:'Doğru. Kendini bildir, gördüğünü anlat. Kimse seni aramak için içeri girmez.'},
+    {i:'list',t:'"Ben çıktım."',s:4,fb:'Kendini bildirdin ama gördüklerin ekip için değerliydi.'},
+    {i:'list',t:'Bildirmeden beklerim.',s:0,fb:'Sayımda kayıp görünürsün, ekip seni içeride arar.'}]}
+};
+function generate(H,T){
+  const need=['olcum','solunum-filtreli'];if(H.sogukYanik)need.push('soguk');if(T.olanak.telsiz)need.push('haber');
+  const owned=T.kkd.filter(k=>LIB[k]);
+  const correct=owned.filter(k=>LIB[k].korur.some(t=>need.includes(t)));
+  const pool=owned.slice(0,8);
+  const filters=T.kkd.filter(k=>k.startsWith('filtre-')).map(k=>k.slice(7));
+  const events=['arkadas','karanlik'];if(H.sogukYanik)events.push('kol');
+  const B=[];
+  B.push({id:'basla',goal:`${T.yer.kacak}: QR'ı okut`,banner:'Vardiya başladı. Soğuk depoda rutin kontrol turundasın.',ppm:0,fx:'none',wait:{qr:Q.kacak}});
+  B.push({id:'kacak',goal:()=>has('telsiz')?'Korun ve telsizle haber ver':'Korun ve uzaklaşmaya hazırlan',banner:'Tıslama ve keskin bir koku! Borudan beyaz buhar fışkırıyor.',leak:1,hiss:1,ppm:120,fx:'jet',wait:{report:'kacak',time:30}});
+  if(T.olanak.alarm)B.push({id:'alarm',goal:`Alarm butonuna git, QR'ı okut`,ppm:60,fx:'jet',wait:{qr:Q.alarm}});
+  B.push({id:'anons',banner:'Alarm çalıyor. Anons yapılıyor.',siren:1,ppm:45,fx:'jet',auto:3500,
+    say:`Dikkat, dikkat. ${T.yer.kacak} bölgesinde amonyak kaçağı. Tüm personel acil çıkışları kullanarak toplanma alanına gitsin.`});
+  if(T.cikis>=2)B.push({id:'kapi',goal:'Çıkış yolunu seç: karar noktası A ya da B',ppm:40,fx:'none',
+    door:{[Q.kkA]:{ad:'Soğutma odası içinden kestirme',s:0,ppm:330,fb:'Kestirme kaçağın içinden geçiyor. Mesafe değil, güvenli güzergâh önemli.'},
+          [Q.kkB]:{ad:'Acil çıkış koridoru',s:10,ppm:25,fb:'Doğru. Acil çıkış yolu seni tehlikeden uzaklaştıracak şekilde planlanır.'}}});
+  B.push({id:'yuru',goal:'Dış kapıya doğru yürü',banner:'Tahliye başladı. Dış kapıya ilerle.',ppm:25,fx:'none',wait:{steps:12,time:20}});
+  B.push({id:'olay',random:events});
+  B.push({id:'dis',goal:`Dış kapı: QR'ı okut`,ppm:20,fx:'none',wait:{qr:Q.dis}});
+  if(T.avlu)B.push({id:'ruzgar',banner:T.olanak.flama?'Rüzgâr flaması kaçak tarafından sana doğru dalgalanıyor. Bulut geliyor!':'Bulut avluya, sana doğru geliyor!',wind:1,ppm:45,fx:'front',
+    choice:{q:'Hangi yöne gidersin?',time:15,o:[
+      {i:'side',t:'Rüzgâra dik, sonra rüzgâr üstüne',s:10,ppm:8,fb:'Doğru. Bulut rüzgârla taşınır. Rüzgâra dik çıkmak bulutun yolundan en hızlı çıkarır.'},
+      {i:'down',t:'Rüzgârla aynı yöne koş',s:0,ppm:150,fb:'Bulut da aynı yöne gidiyor, içinde kalırsın.'},
+      {i:'wait',t:'Kapıda bekle',s:0,ppm:120,fb:'Bulutun yolunda beklemek maruziyeti artırır.'},
+      {i:'low',t:'Alçak rampaya in',s:2,ppm:110,fb:'Sıvı amonyak kaçaklarında soğuk bulut bir süre yere yakın kalabilir. Alçak alanlardan uzak dur.'}]},rule:'Rüzgârı arkana alma'});
+  B.push({id:'toplan',goal:`Toplanma alanı: QR'ı okut`,ppm:6,fx:'none',wait:{qr:Q.top}});
+  B.push({id:'sayim',banner:'Toplanma alanına ulaştın.',siren:0,hiss:0,ppm:2,fx:'none',report:'sayim'});
+  const eye=T.olanak.gozDusu?`Göz duşunda en az ${H.gozYikama} dk yıka`:(T.olanak.acilDus?`Acil duşta en az ${H.gozYikama} dk yıka`:`Lavaboda en az ${H.gozYikama} dk yıka`);
+  const med=T.olanak.revir?'sonra revire git':(T.olanak.ilkYardimci?'ilk yardımcıya haber ver, gerekirse 112':'112\'yi ara');
+  B.push({id:'ilkyardim',banner:'Gözlerin yanıyor.',ppm:2,choice:{q:'Ne yaparsın?',time:20,o:[
+    {i:'water',t:eye,s:10,fb:`Doğru. Amonyak gözde kalıcı hasar yapabilir. Bol suyla en az ${H.gozYikama} dakika yıka, ${med}.`},
+    {i:'rub',t:'Gözlerini ovuştur',s:0,fb:'Ovuşturmak hasarı artırır.'},
+    {i:'bottle',t:'Su şişesiyle hızlıca çalkala',s:4,fb:`Kısa yıkama yetmez. En az ${H.gozYikama} dakika, bol su.`}]},rule:`Göz: en az ${H.gozYikama} dk su`});
+  B.push({id:'son',end:1});
+  const gaps=[];
+  if(T.toplanma<2)gaps.push(['Önemli','Tek toplanma alanı var. Rüzgâr döndüğünde ikinci alan yok.']);
+  if(!T.olanak.anons)gaps.push(['Önemli','Anons sistemi yok. Tahliye talimatı yalnızca alarm sesine bağlı.']);
+  if(!T.olanak.revir)gaps.push(['Bilgi','Revir yok. İlk yardım zinciri: ilk yardımcı ve 112.']);
+  if(!T.olanak.acilDus&&H.sogukYanik)gaps.push(['Önemli','Acil duş yok. Sıvı amonyak teması için yalnızca göz duşu var.']);
+  if(!filters.includes(H.filtre))gaps.push(['Kritik',`Envanterde ${FILT[H.filtre].ad} filtre yok.`]);
+  return {beats:B,pool,correct,filters,gaps};
+}
+const MISSION=generate(HAZ,SITE);
+$('mBrief').textContent=`${SITE.tip}. Görevin: vardiya çalışanı olarak bir tehlikeyle karşılaşırsan doğru ekipmanı kullan, haber ver ve güvenle çık. 6 QR noktası var. Süre 4–6 dakika.`;
+
+/* ======================================================================
+   3) ÇİZİMLER (B tarzı: kalın hat, düz renk)
+   ====================================================================== */
+const K='#2C2C2A';
+function art(id,o={}){
+  const s=`stroke="${K}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"`;
+  switch(id){
+  case 'dedektor':{const al=o.ppm>=35;return `<svg viewBox="0 0 120 120"><rect x="30" y="8" width="60" height="104" rx="12" fill="#EF9F27" ${s}/><rect x="38" y="20" width="44" height="34" rx="5" fill="${al?'#F09595':'#C0DD97'}" stroke="${K}" stroke-width="4"/><text x="60" y="38" text-anchor="middle" dominant-baseline="central" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="${o.ppm!=null&&o.ppm>=100?20:24}" fill="${al?'#501313':'#173404'}">${o.ppm!=null?Math.round(o.ppm):'--'}</text><circle cx="76" cy="68" r="6" fill="${al?'#E24B4A':'#3B6D11'}" stroke="${K}" stroke-width="3"/><path d="M42 84h36M42 96h36" ${s}/></svg>`}
+  case 'maske':{const f=o.f?FILT[o.f]:null;return `<svg viewBox="0 0 120 120"><path d="M24 48 8 40M96 48l16-8" ${s}/><ellipse cx="60" cy="56" rx="38" ry="44" fill="#5F5E5A" ${s}/><ellipse cx="60" cy="44" rx="25" ry="16" fill="#85B7EB" ${s}/><path d="M48 38l7-4" stroke="#E6F1FB" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="92" r="17" fill="${f?f.renk:'#D3D1C7'}" ${s}/><circle cx="60" cy="92" r="6" fill="${f?f.ic:'#888780'}"/></svg>`}
+  case 'ffp2':return `<svg viewBox="0 0 120 120"><path d="M20 52 4 40M100 52l16-12M22 76 4 84M98 76l18 8" ${s}/><path d="M18 54Q60 18 102 54Q97 98 60 108Q23 98 18 54Z" fill="#F1EFE8" ${s}/><path d="M60 36v66" stroke="#B4B2A9" stroke-width="3"/><circle cx="76" cy="76" r="10" fill="#B4B2A9" stroke="${K}" stroke-width="4"/></svg>`;
+  case 'eldiven-kriyo':return `<svg viewBox="0 0 120 120"><rect x="36" y="14" width="12" height="40" rx="6" fill="#378ADD" ${s}/><rect x="50" y="8" width="12" height="44" rx="6" fill="#378ADD" ${s}/><rect x="64" y="10" width="12" height="42" rx="6" fill="#378ADD" ${s}/><rect x="78" y="18" width="11" height="36" rx="5.5" fill="#378ADD" ${s}/><ellipse cx="30" cy="64" rx="9" ry="18" transform="rotate(-35 30 64)" fill="#378ADD" ${s}/><rect x="34" y="40" width="56" height="54" rx="16" fill="#378ADD" ${s}/><rect x="32" y="90" width="60" height="22" rx="7" fill="#185FA5" ${s}/><path d="M62 56v24M52 62l20 12M72 62 52 74" stroke="#E6F1FB" stroke-width="4" stroke-linecap="round"/></svg>`;
+  case 'telsiz':return `<svg viewBox="0 0 120 120"><rect x="70" y="4" width="10" height="32" rx="5" fill="#444441" ${s}/><rect x="32" y="28" width="56" height="86" rx="10" fill="#378ADD" ${s}/><rect x="42" y="40" width="36" height="20" rx="4" fill="#B5D4F4" stroke="${K}" stroke-width="4"/><path d="M44 74h32M44 84h32M44 94h32" ${s}/><circle cx="40" cy="28" r="5" fill="#E24B4A" stroke="${K}" stroke-width="3"/></svg>`;
+  case 'fener':return `<svg viewBox="0 0 120 120"><rect x="10" y="48" width="66" height="26" rx="9" fill="#444441" ${s}/><path d="M76 42 106 30V92L76 80Z" fill="#EF9F27" ${s}/><rect x="30" y="54" width="14" height="14" rx="4" fill="#E24B4A" stroke="${K}" stroke-width="3"/><path d="M106 40v42" stroke="#FAEEDA" stroke-width="5" stroke-linecap="round"/></svg>`;
+  case 'sondurucu':return `<svg viewBox="0 0 120 120"><path d="M60 22c18-6 30 4 34 18" fill="none" ${s}/><rect x="48" y="10" width="24" height="20" rx="4" fill="#444441" ${s}/><path d="M70 14h22" ${s}/><rect x="38" y="30" width="44" height="82" rx="16" fill="#E24B4A" ${s}/><rect x="46" y="56" width="28" height="26" rx="4" fill="#fff" stroke="${K}" stroke-width="4"/></svg>`;
+  case 'bez':return `<svg viewBox="0 0 120 120"><path d="M14 40q12-10 24 0t24 0 24 0 24 0v52q-12 10-24 0t-24 0-24 0-24 0Z" fill="#B5D4F4" ${s}/><path d="M30 58h60M30 74h48" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/><path d="M40 100q4 8 0 12M80 100q4 8 0 12" stroke="#378ADD" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`;
+  case 'star':return `<svg viewBox="0 0 48 48"><path d="M24 4l6 13 14 2-10 10 3 14-13-7-13 7 3-14L4 19l14-2z" fill="${o.on?'#ffd100':'#D3D1C7'}" stroke="${K}" stroke-width="3" stroke-linejoin="round"/></svg>`;
+  }
+  return '';
+}
+const IC={radio:'<rect x="6" y="7" width="12" height="15" rx="2"/><path d="M14 7V2M9 12h6M9 16h6"/>',list:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
+  side:'<path d="M12 21V8M5 4h14M8 12l4-4 4 4"/>',down:'<path d="M5 12h14M13 6l6 6-6 6"/><path d="M2 7h4M2 17h4"/>',wait:'<path d="M6 2h12M6 22h12M7 2c0 6 10 6 10 10S7 16 7 22M17 2c0 6-10 6-10 10s10 4 10 10"/>',
+  low:'<path d="M3 6h6l12 12"/><path d="M15 18h6v-6"/>',water:'<path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/>',rub:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  bottle:'<path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3z"/>',help:'<circle cx="8" cy="7" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M2 21v-2a5 5 0 0 1 10 0v2M13 21v-1.5a4 4 0 0 1 8 0V21"/>',
+  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+  hand:'<path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-3a2 2 0 0 0-4 0"/>',glove:'<path d="M7 21v-4l-3-5 2-1 3 3V5a1.5 1.5 0 0 1 3 0v6V3a1.5 1.5 0 0 1 3 0v8V4a1.5 1.5 0 0 1 3 0v9c0 4-2 6-2 8z"/>',
+  exit:'<rect x="4" y="3" width="10" height="18" rx="1"/><path d="M10 12h11M18 9l3 3-3 3"/>',mask:'<path d="M12 3c-4.4 0-7 3.3-7 7.5V17c0 2.2 3.1 4 7 4s7-1.8 7-4v-6.5C19 6.3 16.4 3 12 3z"/><rect x="8" y="8" width="8" height="5" rx="2.5"/>'};
 const icon=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||''}</svg>`;
 
-/* ---------- Senaryo verisi: yeni senaryo = yeni veri ---------- */
-const QRN={'KBRN-KIM-1':'Kaçak noktası','KBRN-ALARM':'Alarm butonu','KBRN-KIM-2':'Dış kapı','KBRN-KIM-3':'Toplanma alanı'};
-const SOURCE_QR='KBRN-KIM-1';
-const SCN={title:'Kimyasal – amonyak kaçağı',beats:[
- {goal:'Soğutma ünitesine git, kaçak noktası QR\'ını okut',banner:'Tatbikat başladı. Normal çalışma günü.',wait:{qr:'KBRN-KIM-1'},ppm:0,fx:'none'},
- {banner:'Tıslama sesi ve keskin bir koku! Borudan beyaz buhar fışkırıyor.',leakStart:1,hiss:1,ppm:70,fx:'jet',
-  choice:{q:'İlk ne yaparsın?',time:15,o:[
-   {i:'alarm',t:'Alarm ver, çevreyi uyar',s:10,fb:'Doğru. Önce herkes haberdar olmalı, müdahale ekibi harekete geçmeli.'},
-   {i:'toward',t:'Kaynağa yaklaş',s:0,ppm:340,fb:'Kaynağa yaklaşmak seni en yüksek derişimin içine sokar. Kaçağın yerini müdahale ekibi bulur.'},
-   {i:'camera',t:'Fotoğraf çek',s:2,ppm:140,fb:'Zaman kaybı. Bulut yayılırken olay yerinde kalırsın ve alarm gecikir.'},
-   {i:'valve',t:'Vanayı kapat',s:0,ppm:300,fb:'Eğitimsiz ve korumasız müdahale ikinci bir kazazede yaratır. Bu, müdahale ekibinin işi.'}]}},
- {goal:'Alarm butonunu bul, yanındaki QR\'ı okut',wait:{qr:'KBRN-ALARM'},ppm:60,fx:'jet'},
- {banner:'Alarm çalıyor. Anons yapılıyor.',siren:1,ppm:45,fx:'jet',
-  say:'Dikkat, dikkat. Soğutma ünitesinde amonyak kaçağı. Tüm personel en yakın acil çıkıştan toplanma alanına gitsin.',
-  choice:{q:'Hangi yoldan çıkarsın?',time:15,o:[
-   {i:'exit',t:'İşaretli acil çıkış',s:10,ppm:35,fb:'Doğru. Acil çıkış yolları seni tehlikeden uzaklaştıracak şekilde planlanır.'},
-   {i:'shortcut',t:'Soğutma odasından kestirme',s:0,ppm:260,fb:'Kısa yol kaynağın içinden geçiyor. Mesafe değil, güvenli güzergâh önemli.'},
-   {i:'elevator',t:'Yük asansörü',s:2,fb:'Acil durumda asansör durabilir ve içinde mahsur kalırsın.'}]}},
- {goal:'Acil çıkışa doğru yürü',banner:'Tahliye başladı. Acil çıkışa doğru yürü.',wait:{steps:15,time:25},ppm:30,fx:'none'},
- {random:['arkadas','koridor']},
- {goal:'Dış kapıya git, QR\'ı okut',wait:{qr:'KBRN-KIM-2'},ppm:22,fx:'none'},
- {banner:'Dış kapıdasın. Rüzgâr kaçak tarafından sana doğru esiyor. Bulut geliyor!',wind:1,ppm:45,fx:'front',
-  choice:{q:'Hangi yöne gidersin?',time:15,o:[
-   {i:'side',t:'Rüzgâra dik, sonra rüzgâr üstüne',s:10,ppm:8,fb:'Doğru. Bulut rüzgârla taşınır. Rüzgâra dik çıkmak bulutun yolundan en hızlı çıkarır.'},
-   {i:'down',t:'Rüzgârla aynı yöne koş',s:0,ppm:150,fb:'Bulut da aynı yöne gidiyor, içinde kalırsın.'},
-   {i:'wait',t:'Kapıda bekle',s:0,ppm:120,fb:'Bulutun yolunda beklemek maruziyeti artırır.'},
-   {i:'low',t:'Alçak rampaya in',s:2,ppm:110,fb:'Sıvı amonyak kaçaklarında soğuk bulut bir süre yere yakın kalabilir. Çukur ve alçak alanlardan uzak dur.'}]}},
- {goal:'Toplanma alanına git, QR\'ı okut',wait:{qr:'KBRN-KIM-3'},ppm:6,fx:'none'},
- {banner:'Toplanma alanına ulaştın.',siren:0,hiss:0,ppm:2,fx:'none',
-  choice:{q:'Şimdi ne yaparsın?',time:20,o:[
-   {i:'list',t:'Sayıma bildir, gördüklerini anlat',s:10,fb:'Doğru. Sayım ve bilgi, ekibin seni aramak için boşuna içeri girmesini önler.'},
-   {i:'back',t:'Çantanı almaya dön',s:0,ppm:200,fb:'Tehlike bölgesine geri dönülmez. Eşya değil, can önemli.'},
-   {i:'home',t:'Eve git',s:0,fb:'Sayımda kayıp görünürsün, ekip seni içeride arar.'}]}},
- {banner:'Gözlerin yanıyor, koluna buhar temas etmiş.',ppm:2,
-  choice:{q:'Ne yaparsın?',time:20,o:[
-   {i:'water',t:'En az 15 dk bol suyla yıka',s:10,fb:'Doğru. Amonyak göz ve ciltte yanık yapar. İlk iş bol suyla uzun süre yıkamak ve sağlık ekibine bildirmek.'},
-   {i:'rub',t:'Gözlerini ovuştur',s:0,fb:'Ovuşturmak hasarı artırır. Bol suyla yıka.'},
-   {i:'cream',t:'Krem sür',s:2,fb:'Krem kimyasalı ciltte tutar. Önce bol su.'}]}},
- {end:1}
-]};
-/* Yolda rastgele çıkan olaylar: her oynanışta biri seçilir */
-const POOL={
- arkadas:{banner:'Yolda öksüren, gözlerini ovuşturan bir çalışma arkadaşın var. Yürüyebiliyor.',ppm:35,fx:'none',
-  choice:{q:'Ne yaparsın?',time:12,o:[
-   {i:'help',t:'Koluna gir, birlikte çık',s:10,fb:'Doğru. Yürüyebilen birini birlikte götürmek en hızlı yardım. Gözlerini ovuşturmamasını söyle.'},
-   {i:'phone',t:'Bırak, yardım çağır',s:4,fb:'Yürüyebilen birini bırakma. Yürüyemeyen birini ise konumuyla müdahale ekibine bildir.'},
-   {i:'mask',t:'Maskeni ona ver',s:2,fb:'Kendi korumanı kaybedersen ikiniz de risk altına girersiniz.'}]}},
- koridor:{banner:'Önündeki koridor kapısının altından yoğun buhar sızıyor!',ppm:90,fx:'front',
-  choice:{q:'Ne yaparsın?',time:12,o:[
-   {i:'exit',t:'Alternatif acil çıkışı kullan',s:10,ppm:30,fb:'Doğru. Tehlikeli güzergâhı terk et, ikinci çıkışı kullan. Herkes en az iki çıkışı bilmeli.'},
-   {i:'shortcut',t:'Hızla içinden geç',s:0,ppm:280,fb:'Buharın içinden geçmek kısa sürede yüksek doz demek.'},
-   {i:'wait',t:'Kapının önünde bekle',s:0,ppm:120,fb:'Beklemek maruziyeti artırır. Başka çıkışa yönel.'}]}}
-};
+/* ======================================================================
+   4) ÇANTA
+   ====================================================================== */
+const BAG=new Set();
+function renderBag(){
+  $('bagGrid').innerHTML=MISSION.pool.map(k=>`<button class="card${BAG.has(k)?' on':''}" data-k="${k}">${art(k,k==='maske'?{f:null}:{})}<b>${LIB[k].ad}</b>${k==='maske'?`<small>${MISSION.filters.length} filtre seçeneğiyle</small>`:''}</button>`).join('');
+  $('bagCount').textContent=`${BAG.size}/4`;$('bagSlots').innerHTML=[0,1,2,3].map(i=>`<i class="${i<BAG.size?'on':''}"></i>`).join('');
+  $('bagGo').disabled=BAG.size!==4;
+}
+$('bagGrid').addEventListener('click',e=>{const c=e.target.closest('.card');if(!c)return;const k=c.dataset.k;
+  if(BAG.has(k))BAG.delete(k);else if(BAG.size<4)BAG.add(k);else{c.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:220});return}renderBag()});
+let camMode=true;
+function toBag(cam){camMode=cam;$('start').classList.remove('on');$('bag').classList.add('on');renderBag()}
+$('toBagCam').onclick=()=>toBag(true);$('toBagDemo').onclick=()=>toBag(false);
+const has=k=>BAG.has(k);
 
-/* ---------- Durum ---------- */
-const S={mode:null,bi:-1,beat:null,ppm:0,target:0,fx:'none',fxT0:0,dens:0,dose:0,doseRaw:0,mask:false,maskAt:0,leakAt:0,ans:[],t0:0,fin:false,
- moving:false,motionCheck:true,steps:0,stepBase:0,wait:null,waitT0:0,done:new Set(),anchor:null,ori:{a:null,b:null},em:{x:0,y:0},
- choice:null,choiceOpen:false,fbOpen:false,choiceLeft:0,choiceStart:0,hiss:0,siren:0,speaking:false,muted:false,lastToast:0,goal:''};
-const video=$('cam');let cv=$('fx'),ctx=null,det=null;
+/* ======================================================================
+   5) DURUM
+   ====================================================================== */
+const S={bi:-1,beat:null,ppm:0,target:0,fx:'none',fxT0:0,dens:0,hp:100,dose:0,t0:0,fin:false,leakAt:0,
+  held:null,resp:null,filter:null,gloves:false,bezT:0,goodRespAt:0,ffp2Used:false,wrongFilterUsed:false,misuse:[],
+  ans:[],wait:null,waitT0:0,steps:0,stepBase:0,done:new Set(),moving:false,motionCheck:true,
+  anchor:null,ori:{a:null,b:null},em:{x:0,y:0},panel:null,choiceLeft:0,choiceStart:0,fbOpen:false,
+  hiss:0,siren:0,speaking:false,muted:false,lastToast:0,goal:'',hint:{},dark:false,lit:false,darkT:0,lastCough:0};
+const video=$('cam');let cv=$('fx'),det=null;
 
-function toast(m){const n=Date.now();if(n-S.lastToast<2500)return;S.lastToast=n;const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2300)}
-let bTimer=0;
-function banner(m){const b=$('banner');b.textContent=m;b.classList.add('on');clearTimeout(bTimer);bTimer=setTimeout(()=>b.classList.remove('on'),7000);if(navigator.vibrate)navigator.vibrate([120,60,120])}
-function setGoal(t){S.goal=t;$('goalTxt').textContent=t;const w=S.wait,b=$('goalBtn');b.classList.toggle('on',!!w);b.textContent=w&&w.qr?'Simüle et':'İlerle'}
-function say(t){
-  if(S.muted||!window.speechSynthesis)return;
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';u.rate=.95;
-   const v=speechSynthesis.getVoices().find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;
-   u.onstart=()=>S.speaking=true;u.onend=u.onerror=()=>S.speaking=false;speechSynthesis.speak(u)}catch(e){}
+function toast(m,force){const n=Date.now();if(!force&&n-S.lastToast<2200)return;S.lastToast=n;const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2400)}
+function banner(m,col){const b=$('banner');b.textContent=m;b.style.borderColor=col||'var(--bad)';b.classList.add('on');clearTimeout(banner.t);banner.t=setTimeout(()=>b.classList.remove('on'),7000);vib([120,60,120])}
+function vib(p){if(navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+function flash(){const f=$('flash');f.style.transition='none';f.style.opacity=1;requestAnimationFrame(()=>{f.style.transition='opacity .9s';f.style.opacity=0});vib(300)}
+function say(t){if(S.muted||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='tr-TR';u.rate=.95;const v=speechSynthesis.getVoices().find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;u.onstart=()=>S.speaking=true;u.onend=u.onerror=()=>S.speaking=false;speechSynthesis.speak(u)}catch(e){}}
+function record(ctx,q,a,s,fb,rule){S.ans.push({ctx,q,a,s,fb,rule})}
+
+/* ======================================================================
+   6) ELDEKİ EŞYA ve EŞYA ÇUBUĞU
+   ====================================================================== */
+function heldArt(k){return art(k,k==='dedektor'?{ppm:S.ppm}:k==='maske'?{f:S.resp==='maske'?S.filter:null}:{})}
+function renderHotbar(){
+  $('hotbar').innerHTML=[...BAG].map(k=>{let b='';
+    if(k==='maske'&&S.resp==='maske')b=`<em class="${S.filter===HAZ.filtre?'':'r'}">${S.filter}</em>`;
+    if(k==='ffp2'&&S.resp==='ffp2')b='<em>takılı</em>';if(k==='eldiven-kriyo'&&S.gloves)b='<em>takılı</em>';
+    return `<button class="slot${S.held===k?' sel':''}" data-k="${k}" aria-label="${LIB[k].ad}">${k==='dedektor'?art(k,{ppm:S.ppm}):k==='maske'?art(k,{f:S.resp==='maske'?S.filter:null}):art(k)}${b}</button>`}).join('');
+}
+function renderHeld(){const k=S.held;$('held').innerHTML=k?heldArt(k):'';$('heldLab').textContent=k?`${LIB[k].kisa} · kullanmak için dokun`:''}
+function select(k){if(S.held===k)return;S.held=k;const h=$('hand');h.classList.add('down');setTimeout(()=>{renderHeld();h.classList.remove('down')},180);renderHotbar()}
+$('hotbar').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b||S.panel)return;
+  if(S.motionCheck&&S.moving){toast('Önce dur, sonra eşya değiştir');return}select(b.dataset.k)});
+$('held').onclick=()=>{if(S.panel||!S.held)return;if(S.motionCheck&&S.moving){toast('Önce dur');return}use(S.held)};
+
+function use(k){
+  const t=Date.now();
+  if(k==='dedektor'){const v=Math.round(S.ppm);toast(v<5?'Dedektör: temiz hava':`Dedektör: ${v} ppm · ${v>=HAZ.esik.idlh?'HAYATİ TEHLİKE':v>=HAZ.esik.stel?'kısa süreli sınır aşıldı':v>=HAZ.esik.tw?'maruziyet sınırı aşıldı':'amonyak algılandı'}`,1);return}
+  if(k==='maske'){openPanel({kind:'filter'});return}
+  if(k==='ffp2'){S.resp='ffp2';S.filter=null;S.ffp2Used=true;S.respT=t;$('maskOv').classList.add('on');toast('Toz maskesini taktın',1);renderHotbar();return}
+  if(k==='eldiven-kriyo'){S.gloves=true;toast('Kriyojenik eldiven takıldı',1);renderHotbar();if(S.beat&&S.beat.id==='kol'&&S.panel)choose(0);return}
+  if(k==='telsiz'){const r=S.wait&&S.wait.report||(S.beat&&S.beat.report);if(r&&!S.done.has('rep-'+r)){openPanel({kind:'report',key:r});return}toast('Telsiz: şu an bildirecek yeni bir şey yok',1);return}
+  if(k==='bez'){S.bezT=t;toast('Islak bezi ağzına bastırdın',1);return}
+  if(k==='sondurucu'){S.misuse.push('sondurucu');toast('Söndürücüyü sıktın. Bulut hiç değişmedi.',1);vib(200);return}
+  if(k==='fener'){if(S.dark){S.lit=true;$('dark').classList.add('lit');toast('Fenerle yolu aydınlattın',1);resolveDark(true)}else toast('Burası zaten aydınlık',1);return}
+}
+function protection(){
+  let p=0;
+  if(S.resp==='maske'&&S.filter===HAZ.filtre)p=S.ppm>HAZ.esik.idlh?.5:.92;
+  if(Date.now()-S.bezT<10000)p=Math.max(p,.35);
+  return p;
 }
 
-/* ---------- Olay motoru ---------- */
-function resolve(b){if(b.random){const k=b.random[Math.floor(Math.random()*b.random.length)];return Object.assign({id:k},POOL[k])}return b}
+/* ======================================================================
+   7) PANEL: karar, filtre seçimi, telsiz
+   ====================================================================== */
+function openPanel(P){
+  S.panel=P;S.fbOpen=false;$('hand').classList.add('down');$('hotbar').classList.add('down');
+  let h='';
+  if(P.kind==='filter'){
+    h=`<div class="ph"><h3>Hangi filtreyi takarsın?</h3></div><div class="opts one">${MISSION.filters.map(f=>`<button data-f="${f}"><span class="sw" style="background:${FILT[f].renk}"></span><span><b>${FILT[f].ad}</b></span></button>`).join('')}<button data-f="">Vazgeç</button></div>`;
+  }else if(P.kind==='report'){const R=REPORT[P.key];P.c=R;
+    h=`<div class="ph"><h3>${R.q}</h3></div><div class="opts one">${R.o.map((o,i)=>`<button data-opt="${i}">${icon(o.i)}<span>${o.t}</span></button>`).join('')}</div>`;
+  }else if(P.kind==='choice'){const c=P.c;S.choiceLeft=c.time||0;S.choiceStart=Date.now();
+    h=`<div class="ph"><h3>${c.q}</h3>${c.time?`<div id="tnum">${c.time}</div>`:''}</div>${c.time?'<div class="tbar"><i id="tfill"></i></div>':''}<div class="opts ${c.o.length===3?'three':''}">${c.o.map((o,i)=>{const dis=o.need&&!has(o.need);return `<button data-opt="${i}" ${dis?'disabled':''}>${icon(o.i)}<span>${o.t}${dis?'<br><small>(çantanda yok)</small>':''}</span></button>`}).join('')}</div>`;
+  }
+  $('pBody').innerHTML=h;$('panel').classList.add('on');
+}
+function closePanel(){const P=S.panel;S.panel=null;$('panel').classList.remove('on');$('hand').classList.remove('down');$('hotbar').classList.remove('down');renderHotbar();renderHeld();if(P&&P.after)P.after()}
+function feedback(s,fb,after){
+  const cl=s>=10?'ok':s>0?'part':'bad',lab=s>=10?'Doğru':s>0?'Kısmen':'Yanlış';if(s<10)vib(300);
+  S.fbOpen=true;S.panel.after=after;
+  $('pBody').innerHTML=`<div class="fb ${cl}"><strong>${lab} · ${s}/10</strong>${fb}</div><button class="btn dark go" data-act="close">Devam</button>`;
+}
+$('panel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S.panel)return;
+  if(b.dataset.act==='close'){closePanel();return}
+  if(b.dataset.f!=null){const f=b.dataset.f;if(!f){closePanel();return}
+    S.resp='maske';S.filter=f;S.respT=Date.now();$('maskOv').classList.add('on');
+    if(f===HAZ.filtre){if(!S.goodRespAt)S.goodRespAt=Date.now()}else S.wrongFilterUsed=true;
+    toast(`Gaz maskesi takıldı · ${FILT[f].ad} filtre`,1);closePanel();return}
+  if(b.dataset.opt!=null)choose(+b.dataset.opt)});
+function choose(i){
+  const P=S.panel;if(!P||S.fbOpen)return;
+  if(P.kind==='report'){const o=P.c.o[i];S.done.add('rep-'+P.key);record('Telsiz',P.c.q,o.t,o.s,o.fb,'Ne, nerede, kaç kişi');
+    feedback(o.s,o.fb,()=>{if(S.wait&&S.wait.report===P.key)advance();else if(S.beat&&S.beat.report===P.key)advance()});return}
+  if(P.kind==='choice'){const c=P.c,o=i<0?{t:'Süre doldu',s:0,fb:'Acil durumda tereddüt maruziyeti artırır. İlk refleksin hazır olmalı.'}:c.o[i];
+    if(o.ppm!=null)S.target=o.ppm;if(o.dmg)hurt(o.dmg);
+    record(S.beat.banner||'Karar',c.q,o.t,o.s,o.fb,S.beat.rule);feedback(o.s,o.fb,()=>advance())}
+}
+function choiceTick(dt){
+  const paused=S.motionCheck&&S.moving&&S.panel&&S.panel.kind==='choice'&&!S.fbOpen;$('stop').classList.toggle('on',!!paused);
+  if(!S.panel||S.panel.kind!=='choice'||S.fbOpen||paused||!S.panel.c.time)return;
+  S.choiceLeft-=dt;const tn=$('tnum'),tf=$('tfill');if(tn)tn.textContent=Math.max(0,Math.ceil(S.choiceLeft));if(tf)tf.style.width=Math.max(0,S.choiceLeft/S.panel.c.time*100)+'%';
+  if(S.choiceLeft<=0)choose(-1);
+}
+
+/* ======================================================================
+   8) OLAY MOTORU
+   ====================================================================== */
+const EVENTS={
+  arkadas:{id:'arkadas',banner:'Yolda öksüren, gözlerini ovuşturan bir çalışma arkadaşın var. Yürüyebiliyor.',ppm:30,rule:'Yürüyebileni birlikte çıkar',
+    choice:{q:'Ne yaparsın?',time:12,o:[
+      {i:'help',t:'Koluna gir, birlikte çık',s:10,fb:'Doğru. Yürüyebilen birini birlikte götürmek en hızlı yardım. Gözlerini ovuşturmamasını söyle.'},
+      {i:'phone',t:'Bırak, yardım çağır',s:4,fb:'Yürüyebilen birini bırakma. Yürüyemeyen birini ise konumuyla ekibe bildir.'},
+      {i:'mask',t:'Maskeni ona ver',s:2,fb:'Kendi korumanı kaybedersen ikiniz de risk altına girersiniz.'}]}},
+  kol:{id:'kol',banner:'Kapının kolu buzlanmış, üzerinden sıvı amonyak damlıyor!',ppm:35,rule:'Sıvı amonyağa çıplak elle dokunma',
+    choice:{q:'Kapıyı nasıl açarsın?',time:12,o:[
+      {i:'glove',t:'Kriyojenik eldivenle aç',need:'eldiven-kriyo',s:10,fb:'Doğru. Sıvı amonyak deride donma yanığı ve kimyasal yanık yapar.'},
+      {i:'hand',t:'Çıplak elle hızlıca aç',s:0,dmg:25,fb:'Elin dondu ve yandı. Sıvı amonyağa çıplak elle asla dokunma.'},
+      {i:'exit',t:'Diğer çıkışa yönel',s:8,fb:'Güvenli seçim, ama zaman kaybettin. Uygun eldivenin varsa kullan.'}]}},
+  karanlik:{id:'karanlik',banner:'Elektrik kesildi! Koridor zifiri karanlık.',ppm:28,dark:1,goal:'Yolunu bul',rule:'Karanlıkta acil yönlendirmeyi izle'}
+};
+function resolve(b){if(b.random){const k=b.random[Math.floor(Math.random()*b.random.length)];return Object.assign({},EVENTS[k])}return b}
 function go(i){
-  S.bi=i;const b=resolve(SCN.beats[i]);S.beat=b;S.wait=null;
+  S.bi=i;const b=resolve(MISSION.beats[i]);S.beat=b;S.wait=null;
   if(b.end)return finish();
   if(b.ppm!=null)S.target=b.ppm;
   if(b.fx&&b.fx!==S.fx){S.fx=b.fx;S.fxT0=performance.now()}
   if(b.hiss!=null)S.hiss=b.hiss;if(b.siren!=null)S.siren=b.siren;
-  if(b.leakStart&&!S.leakAt)S.leakAt=Date.now();
+  if(b.leak&&!S.leakAt)S.leakAt=Date.now();
   $('wind').classList.toggle('on',!!b.wind);
-  if(b.banner)banner(b.banner);
-  if(b.say)setTimeout(()=>say(b.say),900);
-  if(b.wait){S.wait=b.wait;S.waitT0=Date.now();S.stepBase=S.steps}
-  setGoal(b.goal||(b.choice?'Karar ver':S.goal));
-  if(b.choice)setTimeout(()=>openChoice(b.choice),b.banner?1700:300);
-  else if(!b.wait)setTimeout(()=>go(i+1),3000);
+  if(b.banner)banner(b.banner);if(b.say)setTimeout(()=>say(b.say),900);
+  let goal=typeof b.goal==='function'?b.goal():b.goal;
+  if(b.wait){S.wait=Object.assign({},b.wait);if(S.wait.report&&!has('telsiz'))S.wait.time=15;S.waitT0=Date.now();S.stepBase=S.steps}
+  if(b.door){S.wait={door:b.door};S.waitT0=Date.now()}
+  if(b.report&&!has('telsiz')){b.choice={q:REPORT[b.report].q,time:20,o:REPORT[b.report].o};b.rule='Ne, nerede, kaç kişi'}
+  if(b.report&&has('telsiz')){S.wait={report:b.report,time:25};S.waitT0=Date.now();goal='Telsizle sayıma bildir'}
+  if(b.dark){S.dark=true;S.lit=false;S.darkT=Date.now();$('dark').classList.add('on');$('dark').classList.remove('lit')}
+  setGoal(goal||(b.choice?'Karar ver':S.goal));
+  if(b.choice)setTimeout(()=>openPanel({kind:'choice',c:b.choice}),b.banner?1700:300);
+  else if(b.auto)setTimeout(()=>advance(),b.auto);
 }
+function advance(){if(S.wait&&S.wait.qr)S.done.add(S.wait.qr);S.wait=null;go(S.bi+1)}
+function setGoal(t){S.goal=t;$('goalTxt').textContent=t;
+  const w=S.wait;let h='';
+  if(w&&w.qr)h=`<button data-sim="${w.qr}">Simüle</button>`;
+  else if(w&&w.door)h=Object.keys(w.door).map((c,i)=>`<button data-sim="${c}">${i?'B':'A'}</button>`).join(' ');
+  else if(w&&w.steps)h='<button data-sim="steps">İlerle</button>';
+  $('goalBtns').innerHTML=h}
+$('goalBtns').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.sim;if(v==='steps'){advance();return}onCode(v,null)});
 function waitTick(){
-  const w=S.wait;if(!w||!w.steps)return;
-  const n=Math.max(0,S.steps-S.stepBase),el=(Date.now()-S.waitT0)/1000;
-  $('goalTxt').textContent=`${S.goal} · ${Math.min(n,w.steps)}/${w.steps} adım`;
-  if(n>=w.steps||el>=w.time)advanceWait();
+  const w=S.wait;if(!w)return;const el=(Date.now()-S.waitT0)/1000;
+  if(w.steps){const n=Math.max(0,S.steps-S.stepBase);$('goalTxt').textContent=`${S.goal} · ${Math.min(n,w.steps)}/${w.steps} adım`;if(n>=w.steps||el>=w.time)advance()}
+  else if(w.report&&el>=w.time&&!S.panel){if(has('telsiz')&&!S.done.has('rep-'+w.report)){record('Telsiz',REPORT[w.report].q,'Bildirim yapılmadı',0,'Telsizin vardı ama kullanmadın. Haber vermek ilk görevlerden biri.','Ne, nerede, kaç kişi');toast('Haber vermedin!',1)}advance()}
+  if(S.dark&&!S.lit&&Date.now()-S.darkT>12000)resolveDark(false);
 }
-function advanceWait(){if(!S.wait)return;if(S.wait.qr)S.done.add(S.wait.qr);S.wait=null;go(S.bi+1)}
-$('goalBtn').onclick=()=>{const w=S.wait;if(!w)return;if(w.qr)onCode(w.qr,null);else advanceWait()};
+function resolveDark(withLight){
+  if(!S.dark)return;S.dark=false;
+  if(withLight)record('Elektrik kesintisi','Karanlıkta yolunu nasıl buldun?','El feneriyle',10,'Doğru ekipman. Fener karanlıkta hem seni hem çevrendekileri hızlandırır.','Karanlıkta acil yönlendirmeyi izle');
+  else record('Elektrik kesintisi','Karanlıkta yolunu nasıl buldun?','Acil aydınlatmayı bekledin',5,'Acil aydınlatma yandı ve yeşil yönlendirme işaretlerini izledin. Fener olsaydı daha hızlı çıkardın.','Karanlıkta acil yönlendirmeyi izle');
+  setTimeout(()=>{$('dark').classList.remove('on','lit');banner(withLight?'Fenerle ilerliyorsun.':'Acil aydınlatma yandı. Yeşil yönlendirme işaretlerini izle.','var(--ok)');setTimeout(advance,2500)},withLight?1500:0);
+}
+function onCode(code,g){
+  code=String(code).trim();
+  if(code===Q.kacak&&(g||!S.anchor))setAnchor(g);
+  const w=S.wait;
+  if(w&&w.qr===code){advance();return}
+  if(w&&w.door&&w.door[code]){const d=w.door[code],A=Object.keys(w.door);S.wait=null;
+    record('Karar noktası','Hangi yoldan çıktın?',d.ad,d.s,d.fb,'Kestirme değil, güvenli yol');
+    if(d.s<10){flash();S.target=d.ppm;banner(d.fb);setTimeout(()=>{S.target=25;go(S.bi+1)},5000)}else{banner(d.fb,'var(--ok)');S.target=d.ppm;setTimeout(()=>go(S.bi+1),1800)}return}
+  const known=Object.values(Q).includes(code);
+  if(known&&!S.done.has(code)&&code!==Q.kacak)toast(`QR okundu, ama şimdi değil. Görev: ${S.goal}`);
+  else if(!known)toast(`Tanınmayan QR: ${code.slice(0,24)}`);
+}
 
-/* ---------- Karar paneli ---------- */
-function openChoice(c){
-  S.choice=c;S.choiceOpen=true;S.fbOpen=false;S.choiceLeft=c.time;S.choiceStart=Date.now();
-  $('chBody').innerHTML=`<div class="ch-head"><h3>${c.q}</h3><div id="tnum">${c.time}</div></div><div class="tbar"><i id="tfill"></i></div><div class="grid ${c.o.length===3?'three':''}">${c.o.map((o,i)=>`<button data-opt="${i}">${icon(o.i)}<span>${o.t}</span></button>`).join('')}</div>`;
-  $('choice').classList.add('on');$('dev').classList.add('down');requestAnimationFrame(placeMask);
+/* ======================================================================
+   9) SAĞLIK, SES, SENSÖRLER
+   ====================================================================== */
+function hurt(n){S.hp=Math.max(0,S.hp-n);flash()}
+function healthTick(dt){
+  if(!S.t0||S.fin)return;const p=protection(),v=S.ppm;
+  S.dose+=v*dt/60*(1-p);
+  if(v>HAZ.esik.tw)S.hp=Math.max(0,S.hp-dt*(v/60)*(1-p));
+  const danger=v>HAZ.esik.tw?Math.min(1,(1-p)*v/180):0;$('hurt').style.opacity=danger;
+  const now=Date.now();
+  if(S.resp==='maske'&&S.filter!==HAZ.filtre&&v>HAZ.esik.tw&&now-S.respT>5000&&!S.hint.f){S.hint.f=1;toast('Gözlerin yanıyor! Bu filtre amonyağı tutmuyor.',1)}
+  if(S.resp==='ffp2'&&v>HAZ.esik.tw&&now-S.respT>6000&&!S.hint.p){S.hint.p=1;toast('Öksürüyorsun! Toz maskesi gazı tutmaz.',1)}
+  if(S.resp==='maske'&&S.filter===HAZ.filtre&&v>HAZ.esik.idlh&&!S.hint.i){S.hint.i=1;toast('Maske kaçmak içindir, kalmak için değil. Uzaklaş!',1)}
+  if(danger>.25&&now-S.lastCough>3500){S.lastCough=now;cough()}
+  const f=$('hpFill');f.style.width=S.hp+'%';f.style.background=S.hp>60?'#4cd17f':S.hp>30?'#EF9F27':'#E24B4A';$('hpNum').textContent=Math.ceil(S.hp);
+  if(S.hp<=0)faint();
 }
-function choose(i){
-  if(!S.choiceOpen||S.fbOpen)return;const c=S.choice;
-  const o=i<0?{t:'Süre doldu, karar verilmedi',s:0,fb:'Acil durumda tereddüt etmek maruziyeti artırır. İlk refleksin hazır olmalı.'}:c.o[i];
-  if(o.ppm!=null)S.target=o.ppm;
-  S.ans.push({ctx:S.beat.banner||'',q:c.q,a:o.t,s:o.s,fb:o.fb,rt:Math.round((Date.now()-S.choiceStart)/1000)});
-  const cl=o.s===10?'ok':o.s>0?'part':'bad',lab=o.s===10?'Doğru':o.s>0?'Kısmen':'Yanlış';
-  if(o.s<10&&navigator.vibrate)navigator.vibrate(300);
-  S.fbOpen=true;
-  $('chBody').innerHTML=`<div class="fb ${cl}"><strong>${lab} · ${o.s}/10</strong>${o.fb}</div><button class="go" data-act="next">Devam</button>`;
-  requestAnimationFrame(placeMask);
-}
-function closeChoice(){S.choiceOpen=false;S.fbOpen=false;$('choice').classList.remove('on');$('dev').classList.remove('down');placeMask();go(S.bi+1)}
-$('choice').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.opt!=null)choose(+b.dataset.opt);else if(b.dataset.act==='next')closeChoice()});
-function choiceTick(dt){
-  const paused=S.motionCheck&&S.moving;$('stop').classList.toggle('on',paused&&S.choiceOpen&&!S.fbOpen);
-  if(!S.choiceOpen||S.fbOpen||paused)return;
-  S.choiceLeft-=dt;const tn=$('tnum'),tf=$('tfill');
-  if(tn)tn.textContent=Math.max(0,Math.ceil(S.choiceLeft));if(tf)tf.style.width=Math.max(0,S.choiceLeft/S.choice.time*100)+'%';
-  if(S.choiceLeft<=0)choose(-1);
-}
-/* Maske düğmesi karar paneli açıkken panelin üstüne çıkar, her zaman erişilebilir */
-function placeMask(){const m=$('maskBtn'),c=$('choice');m.style.bottom=S.choiceOpen?`calc(${c.offsetHeight+20}px + env(safe-area-inset-bottom))`:''}
+function faint(){if(S.fin)return;S.fin=true;S.siren=0;S.hiss=0;if(window.speechSynthesis)speechSynthesis.cancel();
+  $('faintWhy').textContent=S.resp==='ffp2'?'Toz maskesi gazı tutmaz.':S.resp==='maske'&&S.filter!==HAZ.filtre?`Yanlış filtre: amonyak için ${FILT[HAZ.filtre].ad}.`:!S.resp?'Solunum koruması kullanmadın.':'Yüksek derişimde çok kaldın. Maske kaçmak içindir.';
+  $('faint').classList.add('on')}
+$('retry').onclick=()=>location.reload();
 
-/* ---------- Maske ---------- */
-function maskUI(){$('maskBtn').innerHTML=icon('mask')+`<span>${S.mask?'Takılı':'Maske'}</span>`;$('maskBtn').classList.toggle('used',S.mask)}
-$('maskBtn').onclick=()=>{if(S.mask||!S.t0)return;S.mask=true;S.maskAt=Date.now();$('maskOv').classList.add('on');maskUI();if(navigator.vibrate)navigator.vibrate(80);toast('Kaçış maskesi takıldı')};
-maskUI();
-
-/* ---------- Ses: kaçak tıslaması, siren, nefes, dedektör bipi ---------- */
 const AU={};
-function auInit(){
-  try{const C=window.AudioContext||window.webkitAudioContext;const c=new C();AU.c=c;AU.m=c.createGain();AU.m.connect(c.destination);
-   const buf=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-   const noise=(type,f,q)=>{const s=c.createBufferSource();s.buffer=buf;s.loop=true;const fl=c.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const g=c.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(AU.m);s.start();return g};
-   AU.hiss=noise('bandpass',4200,.7);AU.br=noise('lowpass',650,.5);
-   const o=c.createOscillator();o.type='sawtooth';const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1800;const g=c.createGain();g.gain.value=0;o.connect(lp);lp.connect(g);g.connect(AU.m);o.start();AU.sir=o;AU.sirG=g;
-  }catch(e){AU.c=null}
-}
+function auInit(){try{const C=window.AudioContext||window.webkitAudioContext;const c=new C();AU.c=c;AU.m=c.createGain();AU.m.connect(c.destination);
+  const buf=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;AU.buf=buf;
+  const noise=(type,f,q)=>{const s=c.createBufferSource();s.buffer=buf;s.loop=true;const fl=c.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const g=c.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(AU.m);s.start();return g};
+  AU.hiss=noise('bandpass',4200,.7);AU.br=noise('lowpass',650,.5);
+  const o=c.createOscillator();o.type='sawtooth';const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1800;const g=c.createGain();g.gain.value=0;o.connect(lp);lp.connect(g);g.connect(AU.m);o.start();AU.sir=o;AU.sirG=g;
+}catch(e){AU.c=null}}
+function cough(){const c=AU.c;if(!c||S.muted)return;try{[0,.22].forEach(off=>{const s=c.createBufferSource();s.buffer=AU.buf;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=900;f.Q.value=.8;const g=c.createGain();const t=c.currentTime+off;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.5,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.18);s.connect(f);f.connect(g);g.connect(AU.m);s.start(t);s.stop(t+.2)})}catch(e){}}
 let lastBeep=0;
-function auTick(ts,shown){
-  const c=AU.c;if(!c)return;const now=c.currentTime,t=ts/1000;
+function auTick(ts){const c=AU.c;if(!c)return;const now=c.currentTime,t=ts/1000;
   AU.m.gain.setTargetAtTime(S.muted||S.fin?0:1,now,.05);
   AU.hiss.gain.setTargetAtTime(S.hiss&&S.fx==='jet'?Math.min(.35,(.05+S.ppm/600)*fade()):0,now,.3);
-  AU.br.gain.setTargetAtTime(S.mask?.2*Math.pow(Math.sin(Math.PI*(t%4)/4),2):0,now,.05);
+  AU.br.gain.setTargetAtTime(S.resp?.2*Math.pow(Math.sin(Math.PI*(t%4)/4),2):0,now,.05);
   AU.sir.frequency.setTargetAtTime(650+450*(.5+.5*Math.sin(t*2*Math.PI/1.8)),now,.05);
   AU.sirG.gain.setTargetAtTime(S.siren?(S.speaking?.015:.055):0,now,.2);
-  if(shown>=25&&ts-lastBeep>Math.max(140,1200-shown*3)){lastBeep=ts;
-   try{const o=c.createOscillator(),g=c.createGain();o.frequency.value=2300;g.gain.value=.06;o.connect(g);g.connect(AU.m);o.start();o.stop(now+.06)}catch(e){}}
+  if(has('dedektor')&&S.ppm>=HAZ.esik.tw&&ts-lastBeep>Math.max(140,1200-S.ppm*3)){lastBeep=ts;try{const o=c.createOscillator(),g=c.createGain();o.frequency.value=2300;g.gain.value=.06;o.connect(g);g.connect(AU.m);o.start();o.stop(now+.06)}catch(e){}}
 }
 $('mute').onclick=()=>{S.muted=!S.muted;$('mute').textContent=S.muted?'Sessiz':'Ses';if(S.muted&&window.speechSynthesis)speechSynthesis.cancel();if(AU.c&&AU.c.state==='suspended')AU.c.resume()};
 
-/* ---------- Sensörler: hareket, adım, yön ---------- */
 const mags=[];let lastStep=0,prevM=9.8;
-addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity;if(!a||a.x==null)return;const m=Math.hypot(a.x,a.y,a.z);
-  mags.push(m);if(mags.length>25)mags.shift();
-  const av=mags.reduce((x,y)=>x+y,0)/mags.length,sd=Math.sqrt(mags.reduce((x,y)=>x+(y-av)**2,0)/mags.length);
-  S.moving=S.moving?sd>.7:sd>1.3;
+addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity;if(!a||a.x==null)return;const m=Math.hypot(a.x,a.y,a.z);mags.push(m);if(mags.length>25)mags.shift();
+  const av=mags.reduce((x,y)=>x+y,0)/mags.length,sd=Math.sqrt(mags.reduce((x,y)=>x+(y-av)**2,0)/mags.length);S.moving=S.moving?sd>.7:sd>1.3;
   const n=Date.now();if(m>11.6&&prevM<=11.6&&n-lastStep>320){S.steps++;lastStep=n}prevM=m});
 addEventListener('deviceorientation',e=>{if(e.alpha!=null){S.ori.a=e.alpha;S.ori.b=e.beta}});
 
-/* ---------- QR okuma ve kaçak noktasına sabitleme ---------- */
+/* QR okuma */
 const off=document.createElement('canvas'),octx=off.getContext('2d',{willReadFrequently:true});
 function v2s(x,y){const W=innerWidth,H=innerHeight,vw=video.videoWidth,vh=video.videoHeight,sc=Math.max(W/vw,H/vh);return{x:(W-vw*sc)/2+x*sc,y:(H-vh*sc)/2+y*sc,k:sc}}
+let lastCode='',lastCodeT=0;
+function gotCode(code,g){const n=Date.now();if(code===lastCode&&n-lastCodeT<2500&&code!==Q.kacak)return;lastCode=code;lastCodeT=n;onCode(code,g)}
 function scan(){
   if(!video.videoWidth||S.fin)return;
-  if(det){det.detect(video).then(r=>{if(r[0]){const b=r[0].boundingBox,p=v2s(b.x+b.width/2,b.y+b.height/2);onCode(r[0].rawValue,{x:p.x,y:p.y,size:Math.max(b.width,b.height)*p.k})}}).catch(()=>{});return}
+  if(det){det.detect(video).then(r=>{if(r[0]){const b=r[0].boundingBox,p=v2s(b.x+b.width/2,b.y+b.height/2);gotCode(r[0].rawValue,{x:p.x,y:p.y,size:Math.max(b.width,b.height)*p.k})}}).catch(()=>{});return}
   if(!window.jsQR)return;
-  const w=360,h=Math.round(w*video.videoHeight/video.videoWidth);off.width=w;off.height=h;octx.drawImage(video,0,0,w,h);
-  const c=jsQR(octx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'dontInvert'});
-  if(c){const k=video.videoWidth/w,L=c.location,p=v2s((L.topLeftCorner.x+L.bottomRightCorner.x)/2*k,(L.topLeftCorner.y+L.bottomRightCorner.y)/2*k);
-   onCode(c.data,{x:p.x,y:p.y,size:Math.hypot(L.topRightCorner.x-L.topLeftCorner.x,L.topRightCorner.y-L.topLeftCorner.y)*k*p.k})}
+  const w=480,h=Math.round(w*video.videoHeight/video.videoWidth);off.width=w;off.height=h;octx.drawImage(video,0,0,w,h);
+  const c=jsQR(octx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'attemptBoth'});
+  if(c&&c.data){const k=video.videoWidth/w,L=c.location,p=v2s((L.topLeftCorner.x+L.bottomRightCorner.x)/2*k,(L.topLeftCorner.y+L.bottomRightCorner.y)/2*k);
+    gotCode(c.data,{x:p.x,y:p.y,size:Math.hypot(L.topRightCorner.x-L.topLeftCorner.x,L.topRightCorner.y-L.topLeftCorner.y)*k*p.k})}
 }
-function setAnchor(g){S.anchor={x:g?g.x:innerWidth*.5,y:g?g.y:innerHeight*.5,a0:S.ori.a,b0:S.ori.b,sc:g?Math.min(2.2,Math.max(.6,g.size/140)):1,steps:S.steps}}
-function onCode(code,g){
-  code=String(code).trim();
-  if(code===SOURCE_QR&&(g||!S.anchor))setAnchor(g);
-  if(S.wait&&S.wait.qr===code){advanceWait();return}
-  if(QRN[code]&&!S.done.has(code)&&!S.choiceOpen)toast(`${QRN[code]} şimdilik değil. ${S.goal}`);
-}
-function anchorPos(){
-  const A=S.anchor;if(!A)return null;let x=A.x,y=A.y;
-  if(A.a0!=null&&S.ori.a!=null){const da=((S.ori.a-A.a0)+540)%360-180,db=S.ori.b-A.b0,ppd=innerWidth/50;x+=da*ppd;y+=db*ppd}
-  return{x,y};
-}
-/* Kaçaktan uzaklaştıkça (adım) jet küçülür ve söner */
+function setAnchor(g){S.anchor={x:g?g.x:innerWidth*.5,y:g?g.y:innerHeight*.42,a0:S.ori.a,b0:S.ori.b,sc:g?Math.min(2.2,Math.max(.6,g.size/140)):1,steps:S.steps}}
+function anchorPos(){const A=S.anchor;if(!A)return null;let x=A.x,y=A.y;
+  if(A.a0!=null&&S.ori.a!=null){const da=((S.ori.a-A.a0)+540)%360-180,db=S.ori.b-A.b0,ppd=innerWidth/50;x+=da*ppd;y+=db*ppd}return{x,y}}
 function fade(){return S.anchor?Math.max(.2,1-(S.steps-S.anchor.steps)/25):1}
 
-/* ---------- Buhar efekti (WebGL) ---------- */
+/* ======================================================================
+   10) BUHAR EFEKTİ (WebGL gürültü)
+   ====================================================================== */
 const FS=`#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -434,9 +603,9 @@ function mkGL(){
   const u={};['R','T','SRC','D','M','AGE','DIR','SC'].forEach(k=>u[k]=gl.getUniformLocation(pr,k));return u;
 }
 try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});if(!gl)throw new Error('webgl yok');U=mkGL();FXS=.5}
-catch(e){console.warn('Buhar efekti kapalı:',e);gl=null;const c2=cv.cloneNode();cv.replaceWith(c2);cv=c2;ctx=cv.getContext('2d')}
+catch(e){console.warn('Buhar efekti kapalı:',e);gl=null}
 function resize(){cv.width=Math.round(innerWidth*FXS);cv.height=Math.round(innerHeight*FXS);if(gl)gl.viewport(0,0,cv.width,cv.height)}
-addEventListener('resize',()=>{resize();placeMask()});
+addEventListener('resize',resize);
 function drawFx(ts){
   const v=S.ppm,tg=S.fx==='none'?0:(v<8?v/32:Math.min(1,.3+v/150));S.dens+=(tg-S.dens)*.04;
   if(!gl)return;const jet=S.fx==='jet',fd=jet?fade():1,k=cv.width/innerWidth;
@@ -446,84 +615,71 @@ function drawFx(ts){
   gl.uniform2f(U.DIR,S.em.x>innerWidth*.6?-.9:.9,.3);gl.uniform1f(U.SC,(S.anchor?S.anchor.sc:1)*(.5+.5*fd));
   gl.drawArrays(gl.TRIANGLES,0,3);
 }
-function arrowUI(){
-  const a=$('arrow'),W=innerWidth,H=innerHeight,p=S.em;
-  const off=S.fx==='jet'&&S.anchor&&fade()>.3&&(p.x<10||p.x>W-10||p.y<110||p.y>H-60);
-  a.classList.toggle('on',!!off);if(!off)return;
-  const x=Math.min(W-44,Math.max(44,p.x)),y=Math.min(H-200,Math.max(170,p.y));
-  a.style.left=x+'px';a.style.top=y+'px';a.querySelector('svg').style.transform=`rotate(${Math.atan2(p.y-H/2,p.x-W/2)}rad)`;
-}
+function arrowUI(){const a=$('arrow'),W=innerWidth,H=innerHeight,p=S.em;
+  const offs=S.fx==='jet'&&S.anchor&&fade()>.3&&(p.x<10||p.x>W-10||p.y<150||p.y>H-120);a.classList.toggle('on',!!offs);if(!offs)return;
+  const x=Math.min(W-44,Math.max(44,p.x)),y=Math.min(H-300,Math.max(190,p.y));a.style.left=x+'px';a.style.top=y+'px';a.querySelector('svg').style.transform=`rotate(${Math.atan2(p.y-H/2,p.x-W/2)}rad)`}
 
-/* ---------- Dedektör ---------- */
-function hud(v){
-  $('ppm').textContent=Math.round(v);$('barFill').style.width=Math.min(100,Math.sqrt(v/400)*100)+'%';
-  let t='Temiz hava',cl='';
-  if(v>=300){t='IDLH: hayati tehlike';cl='alarm'}else if(v>=35){t='Kısa süreli sınır aşıldı';cl='alarm'}
-  else if(v>=25){t='Maruziyet sınırı aşıldı';cl='warn'}else if(v>=5){t='Amonyak algılandı'}
-  $('detState').textContent=t;$('lcd').className='lcd '+cl;$('led').classList.toggle('on',v>=25&&Math.floor(performance.now()/300)%2===0);
-}
-
-/* ---------- Ana döngü ---------- */
-let last=0,frame=0;
+/* ======================================================================
+   11) ANA DÖNGÜ ve BAŞLAT
+   ====================================================================== */
+let last=0,frame=0,scanTimer=0;
 function loop(ts){
   const dt=last?Math.min(.1,(ts-last)/1000):0;last=ts;frame++;
   S.ppm+=(S.target-S.ppm)*Math.min(1,dt*1.2);
-  if(S.t0&&!S.fin){S.dose+=S.ppm*dt/60*(S.mask?.05:1);S.doseRaw+=S.ppm*dt/60}
-  const shown=Math.max(0,S.ppm*(1+.05*Math.sin(ts/350))+(S.ppm>1?Math.random()*1.5:0));
-  const ap=anchorPos()||{x:innerWidth*.5,y:innerHeight*.5};S.em.x+=(ap.x-S.em.x)*.25;S.em.y+=(ap.y-S.em.y)*.25;
-  drawFx(ts);arrowUI();
-  if(frame%5===0)hud(shown);
-  auTick(ts,shown);choiceTick(dt);waitTick();
+  const ap=anchorPos()||{x:innerWidth*.5,y:innerHeight*.42};S.em.x+=(ap.x-S.em.x)*.25;S.em.y+=(ap.y-S.em.y)*.25;
+  drawFx(ts);arrowUI();healthTick(dt);auTick(ts);choiceTick(dt);waitTick();
+  if(frame%6===0&&(S.held==='dedektor'||has('dedektor'))){if(S.held==='dedektor')renderHeld();const sl=document.querySelector('.slot[data-k="dedektor"]');if(sl)sl.firstElementChild.outerHTML=art('dedektor',{ppm:S.ppm})}
   if(!S.fin)requestAnimationFrame(loop);
 }
-
-/* ---------- Başlat ---------- */
-async function start(cam){
-  S.motionCheck=$('motionChk').checked;S.mode=cam?'cam':'demo';
+async function start(){
+  S.motionCheck=$('motionChk').checked;
   auInit();if(AU.c&&AU.c.resume)AU.c.resume();
   try{if(window.speechSynthesis){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}}catch(e){}
   for(const E of [window.DeviceMotionEvent,window.DeviceOrientationEvent])if(E&&E.requestPermission){try{await E.requestPermission()}catch(e){}}
-  $('start').classList.remove('on');$('ar').classList.add('on');
-  if(cam){
-    try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=st;await video.play();
-      if('BarcodeDetector' in window){try{det=new BarcodeDetector({formats:['qr_code']})}catch(e){det=null}}
-      setInterval(scan,300);
-    }catch(e){S.mode='demo';$('ar').classList.add('nocam');toast('Kamera açılamadı. Demo modunda devam ediliyor.')}
-  }else $('ar').classList.add('nocam');
-  S.em={x:innerWidth*.5,y:innerHeight*.5};S.t0=Date.now();resize();go(0);requestAnimationFrame(loop);
+  $('bag').classList.remove('on');$('ar').classList.add('on');
+  if(camMode){try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=st;await video.play();
+      if('BarcodeDetector' in window){try{det=new BarcodeDetector({formats:['qr_code']})}catch(e){det=null}}scanTimer=setInterval(scan,300);
+    }catch(e){$('ar').classList.add('nocam');toast('Kamera açılamadı. Demo modunda devam ediliyor.',1)}}
+  else $('ar').classList.add('nocam');
+  S.held=[...BAG][0];renderHotbar();renderHeld();
+  S.em={x:innerWidth*.5,y:innerHeight*.42};S.t0=Date.now();resize();go(0);requestAnimationFrame(loop);
 }
-$('btnCam').onclick=()=>start(true);$('btnDemo').onclick=()=>start(false);
+$('bagGo').onclick=start;
 
-/* ---------- Rapor ---------- */
-function fmt(ms){const s=Math.round(ms/1000);return `${Math.floor(s/60)} dk ${s%60} sn`}
+/* ======================================================================
+   12) SONUÇ
+   ====================================================================== */
 function finish(){
-  S.fin=true;S.siren=0;S.hiss=0;if(window.speechSynthesis)speechSynthesis.cancel();if(AU.c)AU.m.gain.value=0;
+  S.fin=true;S.siren=0;S.hiss=0;if(window.speechSynthesis)speechSynthesis.cancel();if(AU.c)AU.m.gain.value=0;clearInterval(scanTimer);
   if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());
-  let ms;if(!S.maskAt)ms={s:0,a:'Maske hiç takılmadı',fb:'Kaçış maskesi tehlikeyi fark ettiğin an, tahliyeden önce takılır.'};
-  else{const d=Math.max(0,Math.round((S.maskAt-(S.leakAt||S.maskAt))/1000));
-   ms=d<=15?{s:10,a:`Kaçaktan ${d} sn sonra takıldı`,fb:'Doğru. Maske tahliyeden önce, hemen takılır.'}:d<=45?{s:5,a:`Kaçaktan ${d} sn sonra takıldı`,fb:'Geç kaldın. Belirtiler başlamadan, kaçağı fark ettiğin an tak.'}:{s:2,a:`Kaçaktan ${d} sn sonra takıldı`,fb:'Çok geç. Bu sürede ciddi maruziyet olur.'}}
-  const all=[...S.ans,{ctx:'Kişisel koruma',q:'Kaçış maskesi',a:ms.a,s:ms.s,fb:ms.fb}];
-  const max=all.length*10,got=all.reduce((a,b)=>a+b.s,0),pct=Math.round(got/max*100),who=$('who').value.trim()||'İsimsiz katılımcı';
-  const [lab,col]=pct>=85?['Başarılı','var(--ok)']:pct>=60?['Gelişmeli','var(--part)']:['Tekrar gerekli','var(--bad)'];
-  const end=Date.now(),date=new Date().toLocaleString('tr-TR'),dose=Math.round(S.dose),raw=Math.round(S.doseRaw);
-  const rep={katilimci:who,senaryo:SCN.title,tarih:date,puan:got,maksimum:max,yuzde:pct,sonuc:lab,sure_sn:Math.round((end-S.t0)/1000),doz_ppm_dk:dose,maskesiz_doz_ppm_dk:raw,kararlar:all};
-  const txt=`KBRN Tatbikat Raporu\n${who} · ${date}\n${SCN.title}\nPuan: ${got}/${max} (%${pct}) · ${lab}\nSolunan doz: ${dose} ppm·dk (maskesiz: ${raw})\nSüre: ${fmt(end-S.t0)}\n\n`+all.map((a,i)=>`${i+1}. ${a.q}\n   ${a.a} (${a.s}/10)`).join('\n');
-  $('repBody').innerHTML=`<div class="stripe" style="margin:0 calc(-1*max(5vw,18px))"></div>
-   <h2>Tatbikat raporu</h2><p>${who} · ${date}<br>${SCN.title}</p>
-   <span class="badge" style="background:${col}">%${pct} · ${lab}</span>
-   <div class="tiles">
-    <div class="tile"><small>Karar puanı</small><b>${got}/${max}</b></div>
-    <div class="tile"><small>Solunan doz</small><b>${dose} ppm·dk</b></div>
-    <div class="tile"><small>Maskesiz olsaydı</small><b>${raw} ppm·dk</b></div>
-    <div class="tile"><small>Toplam süre</small><b>${fmt(end-S.t0)}</b></div>
-   </div>
-   <p class="fine" style="margin-top:0">Doz, ortamdaki derişimle sürenin çarpımıdır. Maskenin maruziyeti %95 azalttığı varsayıldı (eğitim amaçlı basitleştirme).</p>
-   ${all.map(a=>`<div class="ans" style="border-color:${a.s===10?'var(--ok)':a.s>0?'var(--part)':'var(--bad)'}"><small>${a.ctx} · ${a.s}/10${a.rt!=null?` · ${a.rt} sn`:''}</small><strong>${a.q}</strong><br>${a.a}<small>${a.fb}</small></div>`).join('')}
-   <div class="btns"><button class="primary" id="cp">Raporu kopyala</button><button class="ghost" id="dl">JSON olarak indir</button><button class="ghost" id="again">Yeniden başla</button></div>
-   <p class="fine">Kamera görüntüsü kaydedilmedi. Rapor yalnızca bu cihazda oluşturuldu.</p>`;
-  $('ar').classList.remove('on');$('report').classList.add('on');
+  const rt=S.goodRespAt&&S.leakAt?Math.round((S.goodRespAt-S.leakAt)/1000):null;
+  const resp={s:0,a:'Solunum koruması kullanılmadı',fb:'Amonyak kaçağında ilk iş doğru filtreli maskeyi takıp uzaklaşmak.'};
+  if(rt!=null){Object.assign(resp,rt<=15?{s:10,a:`Yeşil filtreli maske, kaçaktan ${rt} sn sonra`,fb:'Doğru ekipman, doğru zamanda.'}:{s:5,a:`Yeşil filtreli maske, kaçaktan ${rt} sn sonra`,fb:'Doğru ekipman ama geç. Kaçağı fark ettiğin an tak.'})}
+  else if(S.ffp2Used)Object.assign(resp,{a:'Toz maskesi takıldı',fb:'Toz maskesi gazı tutmaz.'});
+  else if(S.wrongFilterUsed)Object.assign(resp,{a:'Yanlış filtre takıldı',fb:`Amonyak için ${FILT[HAZ.filtre].ad} filtre gerekir.`});
+  const all=[{ctx:'Kişisel koruma',q:'Solunum koruması',...resp,rule:HAZ.altin},...S.ans];
+  const max=all.length*10,got=all.reduce((a,b)=>a+b.s,0),pct=Math.round(got/max*100);
+  const st=[S.hp>=40,resp.s===10&&!S.ffp2Used,pct>=85];
+  const ruleSet=[];all.forEach(a=>{if(!a.rule)return;const r=ruleSet.find(x=>x.r===a.rule);if(r)r.ok=r.ok&&a.s>=8;else ruleSet.push({r:a.rule,ok:a.s>=8})});
+  ruleSet.push({r:'Toz maskesi gazı tutmaz',ok:!S.ffp2Used});if(S.misuse.includes('sondurucu'))ruleSet.push({r:'Gaz kaçağı yangın değil',ok:false});
+  const who=$('who').value.trim()||'İsimsiz',date=new Date().toLocaleString('tr-TR'),dur=Math.round((Date.now()-S.t0)/1000);
+  const rep={katilimci:who,gorev:'Soğuk depoda amonyak',tesis:SITE.tip,tarih:date,canta:[...BAG],saglik:Math.ceil(S.hp),puan:got,maksimum:max,yildiz:st.filter(Boolean).length,doz_ppm_dk:Math.round(S.dose),sure_sn:dur,kararlar:all,eksikler:MISSION.gaps};
+  const txt=`KBRN Görev Raporu · ${who} · ${date}\nGörev: Soğuk depoda amonyak (${SITE.tip})\nYıldız: ${rep.yildiz}/3 · Puan ${got}/${max} · Sağlık ${rep.saglik} · Doz ${rep.doz_ppm_dk} ppm·dk\nÇanta: ${[...BAG].map(k=>LIB[k].ad).join(', ')}\n\n`+all.map((a,i)=>`${i+1}. ${a.q}: ${a.a} (${a.s}/10)`).join('\n')+`\n\nTesis eksikleri:\n`+MISSION.gaps.map(g=>`- ${g[0]}: ${g[1]}`).join('\n');
+  const lc={Kritik:'#d7263d',Önemli:'#f28c28',Bilgi:'#5F5E5A'};
+  $('resBody').innerHTML=`<div class="stripe" style="margin:0 calc(-1*max(5vw,16px))"></div>
+   <span class="tag" style="margin-top:14px">GÖREV TAMAMLANDI</span><h2>${st.filter(Boolean).length===3?'Kusursuz tahliye':st.filter(Boolean).length===2?'İyi iş':'Çıktın ama dersler var'}</h2>
+   <div class="stars">${['Hayatta kaldın','Doğru koruma','Doğru kararlar'].map((l,i)=>`<div class="star">${art('star',{on:st[i]})}<small>${l}</small></div>`).join('')}</div>
+   <p style="margin:8px 0 0;font-weight:600">Sağlık ${Math.ceil(S.hp)} · Solunan doz ${Math.round(S.dose)} ppm·dk · ${Math.floor(dur/60)} dk ${dur%60} sn</p>
+   <div class="rule">${art('maske',{f:HAZ.filtre})}<div><small>ALTIN KURAL KAZANILDI</small><b>${HAZ.altin}</b></div></div>
+   <ul class="rules">${ruleSet.map(r=>`<li><i style="color:${r.ok?'var(--ok)':'var(--bad)'}">${r.ok?'✓':'✗'}</i>${r.r}</li>`).join('')}</ul>
+   <h3 style="font-size:24px;margin:18px 0 8px">Kararların</h3>
+   ${all.map(a=>`<div class="ans" style="border-color:${a.s>=10?'var(--ok)':a.s>0?'var(--part)':'var(--bad)'}"><small>${a.ctx} · ${a.s}/10</small><b>${a.q}</b><br>${a.a}<small>${a.fb}</small></div>`).join('')}
+   <div class="gaps"><b>İSG uzmanı için: tesis eksikleri</b><p class="fine" style="margin:2px 0 8px">Görev, tesis profiline göre üretildi. Bu eksikler profilden otomatik çıkarıldı.</p>${MISSION.gaps.map(g=>`<p><span class="lv" style="background:${lc[g[0]]}">${g[0]}</span>${g[1]}</p>`).join('')}</div>
+   <div class="col"><button class="btn dark" id="cp">Raporu kopyala</button><button class="btn light" id="dl">JSON olarak indir</button><button class="btn light" id="again">Yeniden oyna</button></div>
+   <p class="fine" style="margin-top:14px">Kamera görüntüsü kaydedilmedi. Rapor yalnızca bu cihazda oluşturuldu.</p>`;
+  $('ar').classList.remove('on');$('result').classList.add('on');
   $('cp').onclick=()=>navigator.clipboard.writeText(txt).then(()=>{$('cp').textContent='Kopyalandı'}).catch(()=>{$('cp').textContent='Kopyalanamadı'});
-  $('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(rep,null,2)],{type:'application/json'}));a.download=`kbrn-rapor-${Date.now()}.json`;a.click()};
+  $('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(rep,null,2)],{type:'application/json'}));a.download=`kbrn-gorev-${Date.now()}.json`;a.click()};
   $('again').onclick=()=>location.reload();
 }
 }
